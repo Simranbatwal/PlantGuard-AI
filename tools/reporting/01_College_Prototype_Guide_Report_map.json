@@ -1,0 +1,103 @@
+{
+  "file": "01_College_Prototype_Guide_Report.pdf",
+  "pages": 25,
+  "expected_pages": 25,
+  "sections": [
+    [
+      "Contents",
+      2
+    ],
+    [
+      "Introduction and current progress",
+      3
+    ],
+    [
+      "Abstract and problem statement",
+      4
+    ],
+    [
+      "Objectives and project scope",
+      5
+    ],
+    [
+      "College architecture and data flow",
+      6
+    ],
+    [
+      "Physical setup and sensor placement",
+      7
+    ],
+    [
+      "Controller and main sensors",
+      8
+    ],
+    [
+      "Leaf wetness, camera and accessories",
+      9
+    ],
+    [
+      "Connections and calibration",
+      10
+    ],
+    [
+      "Literature review 1: image generalisation",
+      11
+    ],
+    [
+      "Literature review 2: image-sensor fusion",
+      12
+    ],
+    [
+      "Literature review 3: unfamiliar conditions",
+      13
+    ],
+    [
+      "Literature review 4: updates and advice",
+      14
+    ],
+    [
+      "Previous work and my proposed work",
+      15
+    ],
+    [
+      "Research question and comparisons",
+      16
+    ],
+    [
+      "Datasets and preparation",
+      17
+    ],
+    [
+      "AI models and result handling",
+      18
+    ],
+    [
+      "Software and dashboard",
+      19
+    ],
+    [
+      "Testing and expected evidence",
+      20
+    ],
+    [
+      "Work plan and review milestones",
+      21
+    ],
+    [
+      "Resources and expected outcome",
+      22
+    ],
+    [
+      "Future scope and guide feedback",
+      23
+    ],
+    [
+      "References: research literature",
+      24
+    ],
+    [
+      "References: data and hardware",
+      25
+    ]
+  ]
+}

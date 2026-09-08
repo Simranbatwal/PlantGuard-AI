@@ -1,0 +1,167 @@
+{
+  "file": "03_Guide_Meeting_and_Viva_Handbook.pdf",
+  "pages": 41,
+  "expected_pages": 41,
+  "sections": [
+    [
+      "Contents",
+      2
+    ],
+    [
+      "Contents continued",
+      3
+    ],
+    [
+      "Sabse pehle project ko samjho",
+      4
+    ],
+    [
+      "Plant-health terms and disease labels",
+      5
+    ],
+    [
+      "Hardware basics: current, voltage and wires",
+      6
+    ],
+    [
+      "ESP32, chip, module and development board",
+      7
+    ],
+    [
+      "Sensors, signals and calibration",
+      8
+    ],
+    [
+      "Soil, air and light measurements",
+      9
+    ],
+    [
+      "Leaf wetness and RS485 interface",
+      10
+    ],
+    [
+      "Pins, buses and Arduino programming",
+      11
+    ],
+    [
+      "Pots, cables, enclosure and camera",
+      12
+    ],
+    [
+      "WSN, IoT, Wi-Fi and internet",
+      13
+    ],
+    [
+      "MQTT, messages and reliable records",
+      14
+    ],
+    [
+      "Python, OpenCV and research libraries",
+      15
+    ],
+    [
+      "Application, API and database basics",
+      16
+    ],
+    [
+      "Dataset, labels and honest testing",
+      17
+    ],
+    [
+      "AI, machine learning and neural networks",
+      18
+    ],
+    [
+      "CNN: image se features kaise bante hain",
+      19
+    ],
+    [
+      "ResNet50: viva ke liye clear explanation",
+      20
+    ],
+    [
+      "MobileNetV3, EfficientNet and ViT",
+      21
+    ],
+    [
+      "Training: epochs, batches and learning rate",
+      22
+    ],
+    [
+      "Overfitting, tuning and fair comparison",
+      23
+    ],
+    [
+      "Metrics with a solved example",
+      24
+    ],
+    [
+      "Fusion, quality checks and unknown inputs",
+      25
+    ],
+    [
+      "Forecasting, Random Forest and time models",
+      26
+    ],
+    [
+      "Heatmaps, severity and model updates",
+      27
+    ],
+    [
+      "Laptop, cloud and other project terms",
+      28
+    ],
+    [
+      "Paper, research gap and contribution",
+      29
+    ],
+    [
+      "Meeting ka 10-minute sequence",
+      30
+    ],
+    [
+      "Har component ko kaise explain karein",
+      31
+    ],
+    [
+      "AI aur data ke basic words",
+      32
+    ],
+    [
+      "Guide ke questions 1: scope aur novelty",
+      33
+    ],
+    [
+      "Guide ke questions 2: hardware aur sensing",
+      34
+    ],
+    [
+      "Guide ke questions 3: data aur evaluation",
+      35
+    ],
+    [
+      "Guide ke questions 4: papers aur delivery",
+      36
+    ],
+    [
+      "Research paper padhne ka practical tareeka",
+      37
+    ],
+    [
+      "Meeting ke pehle aur baad kya karna hai",
+      38
+    ],
+    [
+      "Mock viva and action record",
+      39
+    ],
+    [
+      "Further reading 1",
+      40
+    ],
+    [
+      "Further reading 2",
+      41
+    ]
+  ]
+}

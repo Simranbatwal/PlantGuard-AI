@@ -1,0 +1,36 @@
+{
+  "documents": [
+    {
+      "file": "01_College_Prototype_Guide_Report.pdf",
+      "pages": 25,
+      "words": 6017,
+      "links": 54,
+      "rendered_pages": 25
+    },
+    {
+      "file": "02_Hardware_Funding_Proposal.pdf",
+      "pages": 7,
+      "words": 1384,
+      "links": 6,
+      "rendered_pages": 7
+    },
+    {
+      "file": "03_Guide_Meeting_and_Viva_Handbook.pdf",
+      "pages": 41,
+      "words": 9538,
+      "links": 34,
+      "rendered_pages": 41
+    },
+    {
+      "file": "04_One_Page_Guide_Summary.pdf",
+      "pages": 1,
+      "words": 284,
+      "links": 0,
+      "rendered_pages": 1
+    }
+  ],
+  "hardware_subtotal_INR": 18150,
+  "contingency_INR": 3630,
+  "total_INR": 21780,
+  "issues": []
+}

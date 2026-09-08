@@ -1,0 +1,128 @@
+[
+  {
+    "id": "esp32",
+    "page": "https://docs.espressif.com/projects/esp-idf/en/v4.3.6/esp32/hw-reference/esp32/get-started-devkitc.html",
+    "title": "ESP32-DevKitC V4 Getting Started Guide - ESP32 -  \u2014 ESP-IDF Programming Guide v4.3.6 documentation",
+    "image_url": "https://docs.espressif.com/projects/esp-idf/en/v4.3.6/esp32/_images/esp32-devkitc-functional-overview.jpg",
+    "file": "assets\\esp32.jpg",
+    "status": "downloaded"
+  },
+  {
+    "id": "sht31",
+    "page": "https://www.adafruit.com/product/2857",
+    "title": "Adafruit Sensirion SHT31-D [Temperature & Humidity Sensor] : Adafruit Industries, Unique & fun DIY electronics and kits",
+    "image_url": "https://www.adafruit.com/images/480x360/2857-03.jpg",
+    "file": "assets\\sht31.jpg",
+    "status": "downloaded"
+  },
+  {
+    "id": "bh1750",
+    "page": "https://www.adafruit.com/product/4681",
+    "title": "Adafruit BH1750 Light Sensor - STEMMA QT / Qwiic : Adafruit Industries, Unique & fun DIY electronics and kits",
+    "image_url": "https://www.adafruit.com/images/480x360/4681-05.jpg",
+    "file": "assets\\bh1750.jpg",
+    "status": "downloaded"
+  },
+  {
+    "id": "soil",
+    "page": "https://www.dfrobot.com/product-1385.html",
+    "title": "Cost-Effective Capacitive Soil Moisture Sensor for Indoor Plant Care and Environmental Science",
+    "image_url": "https://dfimg.dfrobot.com/enshop/SEN0193/SEN0193_Main_01.jpg",
+    "file": "assets\\soil.jpg",
+    "status": "downloaded"
+  },
+  {
+    "id": "leaf",
+    "page": "https://www.renkeer.com/product/leaf-wetness-sensor/",
+    "title": "Leaf Wetness Sensor - Renke",
+    "image_url": "https://www.renkeer.com/wp-content/uploads/2021/06/leaf-wetness-sensor.jpg",
+    "file": "assets\\leaf.jpg",
+    "status": "downloaded"
+  },
+  {
+    "id": "industrial_soil",
+    "page": "https://www.renkeer.com/product/soil-moisture-sensor/",
+    "title": "Best Soil Moisture Sensor with Probe - Renke",
+    "image_url": "https://www.renkeer.com/wp-content/uploads/2021/09/soil-moisture-sensor.jpg",
+    "file": "assets\\industrial_soil.jpg",
+    "status": "downloaded"
+  },
+  {
+    "id": "phytos",
+    "page": "https://metergroup.com/products/phytos-31/",
+    "status": "unavailable",
+    "error": "HTTP Error 403: Forbidden"
+  },
+  {
+    "id": "ads1115",
+    "page": "https://www.adafruit.com/product/1085",
+    "title": "ADS1115 16-Bit ADC - 4 Channel with Programmable Gain Amplifier [STEMMA QT / Qwiic] : Adafruit Industries, Unique & fun DIY electronics and kits",
+    "image_url": "https://www.adafruit.com/images/480x360/1085-10.jpg",
+    "file": "assets\\ads1115.jpg",
+    "status": "downloaded"
+  },
+  {
+    "id": "dht22",
+    "page": "https://www.adafruit.com/product/385",
+    "title": "DHT22 temperature-humidity sensor + extras : Adafruit Industries, Unique & fun DIY electronics and kits",
+    "image_url": "https://www.adafruit.com/images/480x360/385-00.jpg",
+    "file": "assets\\dht22.jpg",
+    "status": "downloaded"
+  },
+  {
+    "id": "breadboard",
+    "page": "https://www.adafruit.com/product/64",
+    "title": "Half Sized Premium Breadboard - 400 Tie Points : Adafruit Industries, Unique & fun DIY electronics and kits",
+    "image_url": "https://www.adafruit.com/images/480x360/64-06.jpg",
+    "file": "assets\\breadboard.jpg",
+    "status": "downloaded"
+  },
+  {
+    "id": "jumpers",
+    "page": "https://www.adafruit.com/product/758",
+    "title": "Premium Male/Male Jumper Wires - 40 x 6 (150mm) : Adafruit Industries, Unique & fun DIY electronics and kits",
+    "image_url": "https://www.adafruit.com/images/480x360/758-04.jpg",
+    "file": "assets\\jumpers.jpg",
+    "status": "downloaded"
+  },
+  {
+    "id": "usb",
+    "page": "https://www.adafruit.com/product/592",
+    "title": "USB cable - USB A to Micro-B [3 foot long] : Adafruit Industries, Unique & fun DIY electronics and kits",
+    "image_url": "https://www.adafruit.com/images/480x360/592-01.jpg",
+    "file": "assets\\usb.jpg",
+    "status": "downloaded"
+  },
+  {
+    "id": "power",
+    "page": "https://www.adafruit.com/product/1994",
+    "title": "5V 2A Switching Power Supply w/ USB-A Connector : Adafruit Industries, Unique & fun DIY electronics and kits",
+    "image_url": "https://www.adafruit.com/images/480x360/1994-01.jpg",
+    "file": "assets\\power.jpg",
+    "status": "downloaded"
+  },
+  {
+    "id": "multimeter",
+    "page": "https://www.adafruit.com/product/2034",
+    "title": "Digital Multimeter - Model 9205B+ : Adafruit Industries, Unique & fun DIY electronics and kits",
+    "image_url": "https://www.adafruit.com/images/480x360/2034-01.jpg",
+    "file": "assets\\multimeter.jpg",
+    "status": "downloaded"
+  },
+  {
+    "id": "enclosure",
+    "page": "https://www.adafruit.com/product/903",
+    "title": "Small Plastic Project Enclosure - Weatherproof with Clear Top : Adafruit Industries, Unique & fun DIY electronics and kits",
+    "image_url": "https://www.adafruit.com/images/480x360/903-00.jpg",
+    "file": "assets\\enclosure.jpg",
+    "status": "downloaded"
+  },
+  {
+    "id": "solar",
+    "page": "https://www.adafruit.com/product/200",
+    "title": "Medium 6V 2W Solar panel [2.0 Watt] : Adafruit Industries, Unique & fun DIY electronics and kits",
+    "image_url": "https://www.adafruit.com/images/480x360/200-07.jpg",
+    "file": "assets\\solar.jpg",
+    "status": "downloaded"
+  }
+]
