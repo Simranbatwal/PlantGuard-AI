@@ -17,7 +17,7 @@ Working project folder for the college prototype and future VPS-based market pro
 - Market: all disease AI processing runs on a VPS. Sensor Boxes collect and transmit. An optional gateway only bridges communications.
 - The latest supplied written plan and the user's VPS clarification control the design. Earlier images are visual references only.
 - Earlier master roadmap: 180 calendar days, with INR 24,180 including optional compute and contingency. See the current hardware-only guide proposal below.
-- Status: planning package complete; implementation has not started.
+- Status: Phase 1 research foundation and Phase 2 dataset preparation complete. Data tooling and telemetry contracts are implemented; application, firmware and trained models are next.
 
 ## Work folders
 
@@ -57,3 +57,22 @@ College AI runs on a laptop. Future market AI runs on VPS/cloud; no separate fie
 The current guide folder contains the revised 25-page college report, 7-page funding proposal, 41-page beginner viva handbook and one-page summary. The formal documents use simple first-person English and separate previous research, current progress and proposed work. The handbook explains project terminology in Hinglish with examples and viva answers.
 
 The earlier guide pack is preserved at `docs/archive/Guide_Review_v1_2026-09-08/`. The main ZIP has been refreshed. Future document preferences are saved in AGENTS.md; use “laptop” and natural language, and state actual progress directly.
+
+
+## Current software-first development order - 12 September 2026
+
+The user will purchase hardware after the software and model-comparison checkpoint. Follow [the fast-track roadmap](docs/Software_First_Roadmap_2026-09-12.md) for current implementation order. It supersedes the earlier early-purchase timing, while keeping the laptop college architecture and VPS market architecture.
+
+Target: approximately 20-25 focused working days to the software checkpoint, subject to GPU availability and data checks; physical validation follows component delivery. Every model run must retain its configuration, data split, weights, predictions and metrics; see [experiment records](experiments/README.md).
+
+Laptop inspection: i7-6600U, about 7.7 GB RAM, Intel HD Graphics 520; full model training should use an accessible GPU runtime. At that planning checkpoint, no code, downloads or model runs had been completed. See the current Phase 1-2 release below for updated progress.
+
+## Current Phase 1-2 release - 13 September 2026
+
+[Start with the completed-work index](docs/Phase_1_2_2026-09-12/README.md) or [open the progress PDF](docs/Phase_1_2_2026-09-12/PlantGuard_Phase_1_2_Progress_Report.pdf).
+
+Four detailed paper reviews, isolated Python environment, telemetry contract and tomato dataset preparation are complete. All 4,942 downloaded originals passed hash/decode checks. The retained benchmark has 4,486 images (3,142 train / 673 validation / 671 test), plus 235 external-test and 180 unsupported leaf images. Synthetic degraded/non-leaf fixtures are separate. Ten telemetry tests and independent data verification passed.
+
+Use data/processed/tomato_v1 CSV manifests for every later run. Its frozen split hash is 69377f2755d001fe734c4b60d8ebba22d80b82840f0ad1882a069f87c8ce19c4. Preserve excluded originals and the visual-review decisions. Read the data audit for leaf-identity, label and external-validity limitations.
+
+The Colab verification notebook and approximately 192 MiB handoff ZIP are prepared; no Colab execution or trained model is claimed. Next: laptop dashboard, simulated two-zone telemetry and training pipeline setup. Older proposal PDFs remain unchanged as historical editions.

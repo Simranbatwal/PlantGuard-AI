@@ -1,0 +1,1526 @@
+
+--- PAGE 1 ---
+Academic Editors: Anoop Kumar
+Srivastava, Md Parvez Islam, Kenji
+Hatou and Xudong Sun
+Received: 16 January 2026
+Revised: 24 February 2026
+Accepted: 27 February 2026
+Published: 3 March 2026
+Copyright: © 2026 by the authors.
+Licensee MDPI, Basel, Switzerland.
+This article is an open access article
+distributed under the terms and
+conditions of the Creative Commons
+Attribution (CC BY) license.
+Article
+Environmental–Visual Fusion for Proactive Tomato Late Blight
+Management in Protected Horticulture
+Puxing Gao 1,†, Peigen Yang 1,†, Tangji Ke 1,†, Saiwei Wang 1,2, Yulong Wang 1, Fengman Xu 1 and Yihong Song 1,*
+1 China Agricultural University, Beijing 100083, China
+2 Peking University, Beijing 100871, China
+* Correspondence: songyih2019@163.com
+† These authors contributed equally to this work.
+Abstract
+In protected horticultural production, tomato late blight shows strong environmental
+inducibility, with a short latent period, rapid risk accumulation, and a limited control
+window, which challenges conventional post-event disease monitoring. To address this, a
+tomato late blight risk perception and predictive control approach for protected production
+is proposed, integrating deep temporal modeling of environmental factors, visual symptom
+perception, and risk-driven greenhouse control to enable prospective assessment and
+proactive intervention. Based on disease mechanisms and real greenhouse conditions, an
+artificial intelligence (AI) framework covering perception, prediction, and regulation is
+constructed, moving beyond reliance on visible symptoms alone. Long-term evolution
+of key variables, including temperature, air humidity, leaf wetness, and light intensity,
+is modeled using deep temporal networks, while early weak lesions and subtle texture
+changes are captured by visual models. Cross-modal fusion in a unified risk space generates
+continuous risk scores to drive greenhouse regulation. Experiments on a multimodal
+dataset from a real greenhouse in Bayannur, Inner Mongolia, show that the proposed
+method outperforms vision-based and environment-based baselines in recognition and
+risk prediction. It achieves about 0.95 accuracy, 0.94 F1-score, and over 0.97 area under
+the receiver operating characteristic curve (AUC), while providing more than 20 h of
+early warning before disease onset. In environmental modeling, the deep temporal model
+consistently surpasses threshold-based methods, logistic regression, and long short-term
+memory/gated recurrent unit (LSTM/GRU) baselines in risk lead time, false alert rate, and
+prediction stability.
+Keywords: artificial intelligence in horticulture; early disease warning; greenhouse
+microclimate; precision disease management; tomato late blight
+1. Introduction
+Tomato late blight caused by Phytophthora in f estans is one of the most destructive
+diseases in protected tomato production, characterized by a short latent period, rapid
+transmission, and explosive outbreaks, especially under greenhouse conditions with high
+humidity and frequent condensation [1]. Without timely control, large-scale yield losses
+or even complete crop failure may occur, threatening economic efficiency and production
+stability [2]. Compared with open-field conditions, greenhouse environments are highly
+controllable, where temperature, humidity, ventilation, and illumination can be regulated,
+providing a foundation for disease pre-warning and proactive management [3]. However,
+Horticulturae 2026, 12, 299 https://doi.org/10.3390/horticulturae12030299
+
+--- PAGE 2 ---
+Horticulturae 2026, 12, 299 2 of 28
+late blight control still mainly relies on experience-based pesticide application or periodic
+manual inspection, lacking quantitative risk assessment and dynamic prediction [4]. Ex-
+cessive dependence on experience often causes delayed intervention or pesticide overuse,
+while actions taken after visible symptoms usually miss the optimal preventionwindow [5].
+Therefore, developing an intelligent system capable of identifying disease risk before symp-
+tom manifestation and interacting with greenhouse regulation is crucial for precise control,
+reduced pesticide use, and improved intelligence in protected agriculture [6].
+Traditional monitoring and prediction for tomato late blight in protected horticulture
+generally follows three lines: manual scouting, environment rule-based risk indices, and
+statistical/mechanistic modeling [ 7,8]. In commercial greenhouses, however, these ap-
+proaches face practical constraints that limit their value for precision management. Manual
+scouting is difficult to scale to dense canopies and multi-compartment facilities, and the
+sparse sampling frequency often fails to capture rapid microclimate transitions (e.g., noc-
+turnal humidity spikes or short-duration leaf wetness) that can drive infection, resulting
+in delayed responses [9,10]. Environment threshold-based assessment transforms temper-
+ature, relative humidity, or leaf wetness into fixed rules, but greenhouse microclimates
+are highly heterogeneous and strongly affected by structure, ventilation strategy, crop
+stage, and sensor placement. As a consequence, thresholds tuned in one facility or season
+often transfer poorly, producing frequent false alarms or missed warnings and providing
+limited guidance for operational regulation [11]. Statistical and mechanistic models aim to
+formalize environment–disease relationships, yet they typically rely on simplified assump-
+tions and struggle to represent nonlinear interactions and long-term cumulative effects
+among coupled variables, which are common under protected cultivation [12,13]. Since
+disease development is the result of prolonged exposure to joint stressors rather than a
+single instantaneous condition [14], conventional models often cannot deliver stable early
+warning signals that are actionable for fine-grained greenhouse control [15].
+With the rise of smart agriculture infrastructure and vision-based phenotyping, CNN-
+and Transformer-based recognition has achieved strong performance for late blight identi-
+fication from RGB images [16,17], especially when symptoms are visually apparent [18].
+Nevertheless, most studies still formulate the task as static classification or segmentation
+on single images, which implicitly assumes that visible lesions are the primary trigger for
+decision-making [11,19]. This post-event paradigm is inherently limited in protected horti-
+culture, where the latent phase can span hours to days and where management requires
+intervention before lesions become obvious [20]. More importantly, existing vision-only
+pipelines rarely incorporate the evolving environmental predisposition and its cumula-
+tive impact, and thus cannot explain risk escalation under symptom-free conditions or
+support proactive regulation policies such as dehumidification scheduling, ventilation
+timing, or irrigation adjustments [ 21,22]. Although multimodal fusion and time-series
+modeling have been explored, most prior work remains focused on detection/diagnosis
+rather than operational decision support, and systematic closed-loop solutions that align
+environmental time-series, visual cues, and controllable actions are still scarce for tomato
+late blight management [23,24]. Representative studies include ensemble diagnosis using
+prescription-related data [25], real-time object detection pipelines [26], participatory system
+modeling [27], and digital-twin-based pest management [28]; however, they typically lack
+at least one of the following capabilities: (i) explicit modeling of long-horizon environ-
+mental accumulation leading to infection [29], (ii) risk quantification under weak/early
+visual symptoms [30], and (iii) a risk-to-control mapping that enables proactive greenhouse
+regulation rather than post hoc reporting [31].
+To address the critical gap between passive disease monitoring and active environmen-
+tal regulation, this study proposes a proactive multimodal risk perception and predictive
+https://doi.org/10.3390/horticulturae12030299
+
+--- PAGE 3 ---
+Horticulturae 2026, 12, 299 3 of 28
+control framework for tomato late blight. We hypothesize that explicitly modeling the long-
+horizon nonlinear accumulation of microclimatic stressors—such as cumulative humidity
+and leaf wetness duration—and fusing these temporal environmental trajectories with in-
+stantaneous, weak visual symptom representations will generate a stable pre-symptomatic
+risk signal, thereby enabling earlier and more effective greenhouse interventions than
+conventional single-modality approaches. To test this hypothesis, our framework con-
+structs a unified semantic risk space that leverages environmental evolutionary trends
+to validate subtle visual anomalies, significantly enhancing the reliability of early-stage
+risk assessment against transient sensor noise or visual ambiguity. Crucially, the system
+transcends traditional diagnostic monitoring by establishing a differentiable, closed-loop
+mapping from continuous multimodal risk scores directly to dynamic greenhouse regu-
+lation decisions, actively suppressing disease development through precise, preemptive
+environmental modulation.
+The main contributions are summarized as follows:
+1. A disease risk perception and predictive control framework for greenhouse tomato pro-
+duction is proposed, integrating visual perception, environmental temporal modeling,
+and control decision modules into an end-to-end system for perception, prediction,
+and regulation.
+2. A deep temporal modeling method for environmental factors is developed to capture
+nonlinear long-term evolution of key variables such as temperature, humidity, and
+leaf wetness, enabling forward-looking disease risk prediction.
+3. A cross-modal fusion mechanism is developed to jointly exploit weak and early
+visual cues extracted from RGB leaf images and temporally accumulated environ-
+mental predisposition encoded from multivariate climate time series. By integrating
+symptom-level signals with long-horizon environmental dynamics, the fused risk
+estimation is less sensitive to transient noise or modality-specific uncertainty, thereby
+improving the stability and reliability of early-stage risk assessment.
+4. Disease risk prediction is linked with greenhouse control strategies, mapping
+continuous risk scores to regulation decisions for proactive intervention in real
+greenhouse scenarios.
+2. Related Work
+2.1. Limitations of Visual Perception in Early Disease Warning
+With the rapid advancement of computer vision, deep learning has fundamentally
+transformed crop disease recognition, enabling automatic feature extraction that bypasses
+the reliance on handcrafted descriptors and expert knowledge [ 32,33]. Convolutional
+Neural Networks (CNNs), utilizing local receptive fields and weight sharing, have demon-
+strated strong discriminative capabilities in capturing leaf texture, color variations, and
+lesion morphology [34]. These models have achieved high accuracy on standard datasets
+across various crops, including tomato, apple, and wheat [35]. Specifically for tomato late
+blight, end-to-end classification models based on RGB images of leaves or fruits have effec-
+tively replaced manual inspection in many scenarios [36]. Recently, Vision Transformers
+have further enhanced robustness against complex backgrounds and multi-scale lesions by
+modeling global features via self-attention mechanisms [37], thereby alleviating the locality
+bias of CNNs and improving generalization [38].
+However, in the specific context of proactive greenhouse management, purely vision-
+based approaches exhibit inherent limitations. High recognition accuracy is predominantly
+achieved at middle to late infection stages when lesions are clearly visible [39], effectively
+restricting these methods to a “post-event” recognition paradigm [40]. During the latent or
+early infection stages, symptoms manifest only as subtle texture or color changes that are
+https://doi.org/10.3390/horticulturae12030299
+
+--- PAGE 4 ---
+Horticulturae 2026, 12, 299 4 of 28
+difficult to discriminate, leading to high misclassification rates [41]. More critically, single-
+modality visual modeling isolates the plant from its growth environment, ignoring the
+cumulative environmental context prior to disease onset [42]. Consequently, these models
+cannot reflect the dynamic risk evolution driven by environmental changes, limiting their
+utility for early warning and proactive control before symptoms become irreversible.
+2.2. Challenges in Environmental Risk Modeling and Mechanism Integration
+Unlike open-field agriculture, greenhouse environments allow for the monitoring
+and regulation of disease-inducing factors, emphasizing the influence of microclimatic
+conditions on disease occurrence [ 43]. Sensor networks are widely deployed to collect
+critical variables such as temperature, humidity, leaf wetness, and light intensity for risk
+assessment [30]. For tomato late blight, epidemiological studies have confirmed that out-
+breaks are strongly triggered by specific environmental patterns, particularly sustained
+high humidity, leaf condensation, and suitable temperature windows [44]. Early manage-
+ment strategies primarily relied on empirical or threshold-based models, which define
+fixed rules for humidity or wetness duration to predict risk [45]. While simple to imple-
+ment, these static threshold methods struggle to adapt to the dynamic heterogeneity of
+different greenhouse structures and cultivars, resulting in unstable predictions and weak
+generalization [46,47].
+To address these rigidities, statistical and probabilistic models were introduced to
+quantify environment–disease relationships using historical data [ 48,49]. Nevertheless,
+environmental variables in greenhouses exhibit strong nonlinearity and coupling, and
+disease occurrence is often the result of long-term accumulation rather than instantaneous
+triggers, a complexity that conventional statistical models often fail to capture [ 50]. Al-
+though mechanism-based models offer theoretical depth, they require detailed pathogen
+growth and infection parameters that are notoriously difficult to obtain in real-time pro-
+duction settings [51]. Therefore, modeling the complex, nonlinear, and time-dependent
+relationship between environmental factors and disease risk without relying on strong
+prior assumptions remains a significant challenge for effective early warning.
+2.3. Multimodal Temporal Fusion and Closed-Loop Control
+To overcome the limitations of single-source modalities, multimodal and tempo-
+ral modeling has emerged as a critical trend in smart agriculture [ 52]. The integration
+of visual data with environmental time series and meteorological records allows for a
+more holistic capture of dynamic evolution processes, significantly enhancing prediction
+capabilities [53]. In this paradigm, multimodal fusion compensates for the blind spots
+of individual sensors, while deep temporal modeling captures long-term dependencies
+and developmental trends [54]. Architectures such as LSTM and GRU have been exten-
+sively applied to environmental prediction and crop growth modeling [ 55], and recent
+Transformer-based variants have further improved long-horizon modeling through global
+self-attention mechanisms [56]. These advanced methods have shown promise in diverse
+tasks ranging from yield forecasting to disaster assessment [57].
+However, a critical gap remains in the domain of disease management: most existing
+studies treat environmental parameter prediction and disease recognition as separate,
+isolated tasks, lacking a deep, unified integration of visual symptom perception and
+environmental temporal modeling [58]. Particularly for environment-triggered diseases
+like tomato late blight, the potential of linking continuous risk assessment directly to
+greenhouse control systems (e.g., ventilation or dehumidification) remains insufficiently
+explored [24]. Addressing this disconnect, this study proposes a system that integrates
+visual information with environmental evolution patterns using multimodal temporal deep
+https://doi.org/10.3390/horticulturae12030299
+
+--- PAGE 5 ---
+Horticulturae 2026, 12, 299 5 of 28
+learning, establishing a closed-loop framework for disease risk perception and predictive
+control in greenhouse tomato production.
+3. Materials and Method
+3.1. Data Collection
+Data collection was conducted in a smart multi-span greenhouse under real pro-
+duction conditions located in Bayannur, Inner Mongolia, China. To ensure the dataset
+possessed sufficient environmental diversity and representativeness, the data acquisition
+period spanned a complete production cycle from November 2023 to March 2024. This
+five-month window captured the critical seasonal transition from winter to early spring, a
+period characterized by pronounced diurnal temperature variations (often exceeding10 ◦C)
+and frequent high-humidity events caused by condensation. These dynamic microclimatic
+conditions readily satisfy the environmental thresholds for tomato late blight incubation
+and outbreak, allowing the dataset to encompass a wide spectrum of environmental states
+ranging from low-risk stable intervals to high-risk inductive periods. The experimental ob-
+jects were greenhouse-grown tomato crops, monitored continuously through transplanting,
+vegetative growth, flowering, and fruit setting phases, as summarized in Table 1. Tomato
+leaf image data were collected using fixed high-resolution industrial RGB cameras de-
+ployed between crop rows. The camera installation height was maintained approximately
+at the canopy level, with shooting angles arranged nearly perpendicular to the leaf surface
+to minimize occlusion. Image acquisition was automatically triggered at multiple key
+intervals daily—morning, midday, and evening—to capture leaf appearance under diverse
+natural illumination levels and physiological states. Synchronous recording of greenhouse
+supplementary lighting and ventilation status ensured that the image data faithfully re-
+flected the dynamic influence of environmental regulation on leaf texture and symptom
+evolution. Consequently, the final image dataset explicitly represents the full continuum
+of disease development, including healthy leaves, the challenging pre-symptomatic latent
+stage identifiable only through environmental history, and various severities of visible late
+blight lesions, as illustrated in Figure 1.
+Leaf LeafStemFruit StemFruit
+Figure 1. Representative visual symptoms of tomato late blight (Phytophthora infestans) on various
+anatomical parts of the tomato plant included in the dataset. The panel displays characteristic
+pathological manifestations, including irregular necrotic lesions on leaves, dark brown streaks on
+stems, and firm, greasy spots on fruits, illustrating the diverse morphological features captured for
+multimodal risk perception.
+Environmental sensor data were continuously collected using a multi-parameter
+monitoring system arranged near the crop canopy to capture the specific microclimate
+influencing pathogen activity. Variables including air temperature, relative humidity, leaf
+wetness, and light intensity were sampled at a minute-level frequency and precisely time-
+aligned with image acquisition through unified timestamps. Disease stage annotation
+was performed by integrating expert field inspections with environmental risk analysis,
+categorizing samples into healthy, potential risk (latent), and symptomatic stages. Crucially,
+the “potential risk” category captures time intervals of sustained high humidity where
+visual symptoms are absent but infection pressure is high, providing essential ground truth
+for early warning tasks. By jointly annotating environmental factor evolution and visual
+https://doi.org/10.3390/horticulturae12030299
+
+--- PAGE 6 ---
+Horticulturae 2026, 12, 299 6 of 28
+symptom changes, a multimodal time-series dataset oriented toward tomato late blight
+risk perception and prediction research was ultimately constructed.
+Table 1. Detailed specifications of the multimodal tomato late blight dataset acquired in a commercial
+smart greenhouse in Bayannur, Inner Mongolia. The table itemizes the specific data modalities
+collected (RGB leaf images, air temperature, relative humidity, leaf wetness, and light intensity),
+the sensor deployment strategy, the temporal sampling frequencies for each data type, and the
+total volume of accumulated records and expert-annotated disease labels used for model training
+and validation.
+Data Type Collection Location Sampling Frequency Data Volume
+Leaf image data Greenhouse in Bayannur, Inner Mongolia Multiple times per day 18,600 images
+Air temperature Greenhouse sensor network 1 min 172,800 records
+Air relative humidity Greenhouse sensor network 1 min 172,800 records
+Leaf wetness Leaf surface wetness sensors 1 min 172,800 records
+Light intensity Illumination sensors 1 min 172,800 records
+Disease stage annotations Expert field inspection Event-driven 18,600 labels
+3.2. Data Preprocessing and Augmentation Strategy
+In multimodal disease risk perception and prediction, data quality and synchroniza-
+tion largely determine whether a model can learn meaningful early-risk patterns. In this
+study, tomato leaf images and greenhouse environmental sensor time series differ sub-
+stantially in acquisition mechanisms, noise characteristics, and sampling frequency. If
+preprocessing is not handled carefully, modality imbalance and temporal misalignment can
+dilute weak pre-symptomatic signals and reduce the reliability of risk prediction. Therefore,
+before model training, the raw data were processed systematically to ensure distribution
+consistency, temporal continuity, and representative learning samples.
+Image preprocessing. Tomato leaf images were collected under natural greenhouse
+conditions, and thus exhibit variations in shooting distance, viewpoint, background clutter,
+and illumination. First, a leaf-centered region of interest was cropped to suppress irrelevant
+background and encourage the visual model to focus on leaf texture and color cues associ-
+ated with early infection. Cropping was performed using fixed-size windows centered on
+the manually verified leaf area in each image, and images with insufficient leaf coverage
+were removed [59]. Second, all cropped images were resized to a unified input resolution
+to eliminate scale inconsistency across batches and to stabilize training [ 60]. Third, illu-
+mination differences across time (e.g., cloudy versus sunny periods) were addressed by
+standardizing pixel intensities using the mean and standard deviation computed from the
+training set, so that images acquired at different times share comparable brightness and
+contrast statistics [61]. This normalization improves robustness to lighting changes and
+helps the model attend to subtle early-stage lesion patterns.
+Environmental time-series preprocessing. Environmental variables (temperature, air
+humidity, leaf wetness, and light intensity) were recorded continuously at fixed intervals,
+but inevitably contain short-term noise spikes and occasional missing values due to sen-
+sor precision limits, communication dropouts, or maintenance. To reduce the impact of
+transient fluctuations that do not reflect real microclimate evolution, each environmental
+channel was smoothed using a sliding-window moving average (with a small window cho-
+sen to suppress high-frequency noise while preserving diurnal and multi-hour trends) [62].
+Missing values were handled by time-continuity interpolation: when isolated gaps oc-
+curred, linear interpolation between the nearest valid observations was applied; when
+longer gaps occurred, the affected segments were excluded from training to avoid injecting
+unreliable artificial patterns [63]. After denoising and gap handling, each environmental
+channel was normalized (z-score) using training-set statistics to place variables with dif-
+https://doi.org/10.3390/horticulturae12030299
+
+--- PAGE 7 ---
+Horticulturae 2026, 12, 299 7 of 28
+ferent physical units on a comparable scale, which benefits stable temporal modeling and
+cross-modal fusion [64].
+Temporal alignment across modalities. Image acquisition and environmental sensing
+are not perfectly synchronized and typically differ in sampling frequency. To construct
+unified multimodal samples, each image was paired with the temporally nearest environ-
+mental record. When multiple environmental records fell within a short tolerance window
+around an image timestamp, the closest record was selected; if no environmental record
+was available within the tolerance due to missing sensor data, the corresponding image
+sample was discarded. This alignment ensures that visual cues are associated with a con-
+sistent snapshot of the contemporaneous microclimate, which is essential for subsequent
+cross-modal risk modeling [65].
+Augmentation and class-imbalance handling. Early-stage late blight symptoms are
+subtle and appear less frequently than healthy samples, which can bias training toward
+dominant classes. To improve generalization under realistic greenhouse variability and to
+strengthen sensitivity to weak lesions, data augmentation was applied online during train-
+ing, with stronger augmentation applied to early-stage samples. Augmentations included
+random rotation [66], horizontal/vertical flipping [67], and mild brightness/contrast jitter
+within bounded ranges that preserve disease-relevant texture [68]. This strategy increases
+the effective diversity of early-stage images without changing their semantic disease char-
+acteristics, alleviating class imbalance and improving robustness.
+3.3. Proposed Method
+3.3.1. Overall
+At the model design level, a closed-loop pipeline consisting of visual perception,
+environmental factor temporal modeling, cross-modal risk fusion, and predictive control
+mapping is constructed. Preprocessed multimodal samples are fed into the system in a
+time-aligned manner. At each time step t, the leaf image It and the corresponding envi-
+ronmental vector Et ∈ Rd are synchronously input. First, the visual symptom perception
+module takes It as input and extracts hierarchical representations through a deep visual
+encoder, producing a visual feature vt = fvis(It). This feature emphasizes sensitivity to
+weak lesions, early texture variations, and subtle color anomalies, thereby reflecting the
+current latent pathological state of the crop. Second, the environmental factor modeling
+module receives the past L-step environmental sequence {Et−L+1, . . ., Et} as input, and
+a deep temporal network is employed to learn long-term dependencies and nonlinear
+couplings among environmental variables, yielding a temporal environmental represen-
+tation st = fenv(Et−L+1:t) that characterizes the evolution of risk triggered by sustained
+environmental accumulation. Subsequently, the cross-modal risk fusion module maps vt
+and st into a unified risk semantic space and performs joint modeling to obtain a fused
+feature zt = ffus([vt, st]). A risk regression head further outputs a continuous risk score
+rt = g(zt) ∈ [0, 1], where rt represents either the instantaneous infection probability or a
+continuous measure of risk intensity, thus supporting prospective assessment during the
+latent period. At the decision level, the predictive control interface mapsrt and its temporal
+variation to greenhouse control actions at = π(rt, ∆rt), enabling the triggering or intensity
+adjustment of ventilation, dehumidification, and supplementary lighting. Through the
+stepwise coupling of these modules, the system completes the full process from multi-
+modal representation learning to continuous risk evaluation and control linkage within a
+unified framework, realizing a deployable predictive control loop for greenhouse tomato
+late blight.
+https://doi.org/10.3390/horticulturae12030299
+
+--- PAGE 8 ---
+Horticulturae 2026, 12, 299 8 of 28
+3.3.2. Environmental Factor Modeling Module Based on Deep Temporal Networks
+The environmental factor modeling module based on deep temporal networks is de-
+signed to extract latent risk representations closely associated with tomato late blight from
+continuous environmental observations. The core principle is not to judge environmental
+states at a single moment, but to systematically model the cumulative effects and nonlinear
+temporal evolution of environmental predisposing factors.
+As shown in Figure 2, time-aligned greenhouse sensor data are first organized into a
+length-L temporal sequence Et−L+1:t = {Et−L+1, . . ., Et}, where each environmental vector
+comprises multiple variables, including air temperature, air relative humidity, leaf wetness,
+and light intensity. This sequence is fed into a deep temporal encoding network for feature
+extraction. The encoder is constructed by stacking multiple temporal units, in which
+gated mechanisms selectively memorize and update historical information, allowing short-
+term random fluctuations to be distinguished from long-term stable trends and thereby
+forming high-dimensional temporal representations of environmental factors. To further
+enhance adaptive modeling of the relative importance of different time segments, a routing-
+based feature selection structure is introduced after temporal encoding. As illustrated,
+environmental temporal features are treated as a set of temporal tokens, concatenated and
+fed into a routing MLP to model the risk relevance of each token. A probability distribution
+is obtained through softmax normalization, characterizing the contribution of each time
+segment to the current risk assessment. Based on this distribution, highly relevant tokens
+are emphasized in the latent space, while tokens with lower contributions are suppressed
+or pruned, enabling focused attention on critical environmental stages. Mathematically,
+this process constructs a weighted environmental representation st = ∑i αihi, where hi
+represents the temporal features and αi denotes the normalized attention weights derived
+from the routing mapping. To improve readability, the detailed mathematical formulations
+of the routing function and the theoretical stability bounds ensuring temporal consistency
+under sensory noise are provided in Appendix A. This representation serves as the final
+output of the environmental factor modeling module and is passed to the subsequent
+cross-modal fusion stage. Such a design enables explicit modeling of which temporal
+segments of environmental conditions are most critical to the current disease risk, avoiding
+information dilution caused by simple averaging or fixed-window aggregation. From a
+task perspective, this module enhances sensitivity to key predisposing patterns such as
+sustained high humidity and repeated condensation, improves adaptability to diverse
+greenhouse operating conditions and seasonal variations, and produces smoother, more
+stable, and forward-looking risk assessments, thereby providing a reliable environmental
+risk semantic basis for subsequent fusion with visual symptom information and predictive
+control decision-making.
+Image
+Greenhouse Sensor Data
+VIT
+CLIP
+UNCERTAINTY INFO
+VISUAL INFO
+TEXTUAL INFO
+ROUTER MLP
+FEATURE STITCHING
+Soft max NormalizationProbability DistributionRelevance Ranking
+Select TOP-K Tokens
+Pruned Tokens
+Figure 2. Schematic architectural framework of the Environmental Factor Modeling Module based
+on deep temporal networks. The pipeline illustrates the processing of time-aligned multivariate
+sensor data (temperature, humidity, wetness, light) through a deep temporal encoder to extract latent
+features. A Router MLP subsequently generates a probability distribution to identify critical time
+segments, using a Top-K selection mechanism to prune irrelevant data and aggregate a weighted
+environmental risk representation (st) for downstream analysis.
+https://doi.org/10.3390/horticulturae12030299
+
+--- PAGE 9 ---
+Horticulturae 2026, 12, 299 9 of 28
+3.3.3. Visual Symptom Perception and Early Feature Extraction Module
+The visual symptom perception and early feature extraction module takes the time-
+aligned leaf image Xt as input and adopts a hierarchical detail transformer architecture to
+jointly capture local texture details of weak lesions and global cross-region consistency, as
+shown in Figure 3.
+Input PatchesPatch EmbedDetail Transformer EncoderPatch MergingDetail Transformer EncoderPatch MergingDetail Transformer Encoder
+LNFeature AttentionADD &LNFFNADD
+LNFeature AttentionADD &LNFFNADD
+Visual TokenPatch ConversionConvolution BlockWeighted Convolution
+Attention Fusion
+Stage 1Stage 2Stage 3
+Transformer EncoderFeature Attention
+Figure 3. Schematic diagram of the Visual Symptom Perception and Early Feature Extraction Module.
+The architecture adopts a hierarchical multi-stage design to process high-resolution tomato leaf
+images. It integrates a Detail Transformer Encoder to capture global semantic dependencies and a
+parallel Convolutional Branch (comprising Patch Conversion and Convolution Blocks) to preserve
+high-frequency local texture details. An Attention Fusion mechanism dynamically combines these
+global and local features to generate a robust visual representation (ut) sensitive to early-stage lesions.
+In implementation, the input resolution is fixed at 224 × 224 × 3. The image is first
+partitioned into non-overlapping 4 × 4 patches through patch embedding and linearly
+projected into a token sequence with channel dimension C1 = 96, resulting in a stage-1
+token grid of size H1 × W1 = 56 × 56. This representation is then processed by a detail
+transformer encoder with depth 2, where each encoder consists of pre-normalized feature
+attention and a feed-forward network while preserving the token resolution. Subsequently,
+three patch merging operations are applied to progressively halve the spatial resolution
+and expand the channel dimensions to C2 = 192, C3 = 384, and C4 = 768, corresponding
+to token grids of 28 × 28, 14 × 14, and 7 × 7 for stages 2, 3, and 4, respectively. The encoder
+depths of these stages are set to 2, 6, and 2, with multi-head attention numbers of 3, 6,
+12, and 24, respectively, to match the increasing complexity of feature scales. The patch
+embedding process can be expressed as
+Z(1) = reshape(Proj(Unfold4(Xt))) + P(1), (1)
+where Unfold4(·) denotes unfolding into 4 × 4 patches, Proj represents linear projection,
+and P(1) is a learnable positional encoding. Within the ℓ-th encoder of the s-th stage, feature
+attention performs content-aware token interactions and explicitly enhances fine-grained
+differences, formulated as
+A = softmax
+ 
+(ZWQ)(ZWK)⊤
+√
+d
+!
+, ˆZ = A(ZWV), (2)
+followed by gated feature attention to separate weak texture responses from background
+fluctuations, G = σ( ˆZWg), Z+ = Z + G ⊙ ˆZ, (3)
+where σ(·) denotes the sigmoid function and ⊙ indicates element-wise multiplication. The
+subsequent feed-forward update is defined as
+Z′ = Z+ + ϕ(Z+W1)W2, (4)
+where ϕ(·) is chosen as gelu to enhance the representation of subtle nonlinear texture
+perturbations. To further align with the detail enhancement branch illustrated as “vi-
+sual token–patch conversion–convolution block–weighted convolution–attention fusion”,
+https://doi.org/10.3390/horticulturae12030299
+
+--- PAGE 10 ---
+Horticulturae 2026, 12, 299 10 of 28
+tokens at the output of stage 1 are rearranged into a feature map F ∈ R56×56×96 and pro-
+cessed by a lightweight convolution block to extract local high-frequency textures. Token
+attention is then used to generate spatial weights for reweighting the convolutional features,
+which are finally fused with the token backbone through attention-based fusion,
+U = Conv3×3(F), M = softmax(Pool(Z(1))Wm), (5)
+˜U = M ⊙ U, V = FuseAttn(Z(1), Flatten( ˜U)). (6)
+Here, M is broadcast along spatial dimensions to emphasize texture channel responses in
+suspected lesion regions. This fusion mechanism mathematically bounds the combined
+representation via a convex combination, thereby enhancing the signal-to-noise ratio of
+weak local lesion textures while systematically suppressing background noise without
+introducing unstable amplification (detailed mathematical proofs regarding this stability
+bound are provided in Appendix B). The multi-scale visual features produced by this
+module are aggregated at time t into ut and jointly used with the temporal representation
+st from the environmental factor modeling module in the cross-modal risk fusion module,
+zt = ψ([ut, st]), rt = ρ(zt), (7)
+where ψ(·) denotes the fusion mapping and ρ(·) denotes the risk regression function. This
+joint design allows the sensitivity of visual cues to current latent abnormalities to comple-
+ment the prospective nature of environmental factor accumulation. When environmental
+risk increases while visual changes remain weak, st stably guides the risk trend, whereas
+subtle texture anomalies detected by ut provide immediate correction, enabling earlier and
+more robust continuous risk assessment during the latent period of tomato late blight and
+supplying reliable visual evidence for subsequent control decisions.
+3.3.4. Cross-Modal Risk Fusion and Predictive Control Strategy
+The cross-modal risk fusion and predictive control strategy takes high-level semantic
+features from the visual symptom perception module and temporal risk representations
+from the environmental factor modeling module as inputs, performing continuous risk
+estimation within a unified token space and mapping the results to executable greenhouse
+control commands.
+As shown in Figure 4, the visual branch adopts the stage-4 token grid of size 7 × 7,
+yielding Nv = 49 visual tokens with channel dimension Cv = 768. On the environmental
+side, the temporal representation st ∈ R256 is linearly projected and reshaped into Ne = 8
+environmental tokens, each with dimension Ce = 256, to balance computational cost in the
+fusion backbone. In addition, “other conditions” are introduced as control context tokens,
+where discrete variables such as ventilation level, dehumidification state, and spraying
+switch are embedded to form Nc = 4 condition tokens, also with dimension 256. For cross-
+modal alignment, visual tokens are first projected to 256 dimensions and concatenated
+with environmental and condition tokens to form a unified sequence Zt ∈ RN×256, where
+N = Nv + Ne + Nc = 61, expressed as
+Zt = concat(XtWv, reshape (stWe), CtWc), (8)
+with Xt ∈ R49×768 denoting the visual token matrix andCt the control condition vector. The
+fusion backbone consists of L f = 4 transformer encoder layers with model width d = 256,
+h = 8 attention heads, and feed-forward hidden dimension d f f = 1024. A synchronized
+mask is applied in the attention layers to constrain cross-modal interactions, allowing
+environmental tokens to interact only with temporally aligned visual and condition tokens,
+thereby preventing noise propagation from unrelated segments. Let M ∈ RN×N denote the
+https://doi.org/10.3390/horticulturae12030299
+
+--- PAGE 11 ---
+Horticulturae 2026, 12, 299 11 of 28
+mask matrix, where allowed positions are set to 0 and disallowed positions to −∞. The
+masked attention in the ℓ-th layer is written as
+AttnM(Z) = softmax
+ 
+QK⊤
+√dh
++ M
+!
+V, (9)
+where Q = ZW (ℓ)
+Q , K = ZW (ℓ)
+K , V = ZW (ℓ)
+V , and dh = d/h. For risk regression, a fused
+representation gt ∈ R256 is obtained either from a dedicated [cls] risk token or via weighted
+pooling over all tokens, and a two-layer mlp is used to output a continuous risk score
+rt ∈ (0, 1),
+rt = σ(W2 ϕ(W1gt + b1) + b2), (10)
+where ϕ(·) denotes gelu and σ(·) denotes sigmoid. A key property of this design is
+the theoretical stability of the continuous risk mapping. By constraining the network’s
+Lipschitz constant, the sensitivity of the output risk to input perturbations is strictly
+bounded, ensuring that risk predictions remain smooth and reliable even under short-
+term sensor disturbances or visual noise (the detailed mathematical derivation of these
+stability bounds is provided in Appendix C). Furthermore, the synchronized mask restricts
+attention computation to structured sub-blocks, reducing the number of effective interaction
+edges from O(N2) to O(N2
+v + N2
+e + N2
+c + NvNe), thereby lowering computational cost
+and suppressing spurious associations in long-term online greenhouse inference. For
+control linkage, an interpretable risk-to-action mapping network π(·) is employed to
+output a control intensity vector at ∈ [0, 1]m, where m = 3 corresponds to ventilation,
+dehumidification, and supplementary lighting. Control actions are jointly determined by
+the current risk level and its temporal variation,
+at = σ
+
+U2 ϕ
+
+U1 [rt, ∆rt]⊤ + c1
+
++ c2
+
+, (11)
+with ∆rt = rt − rt−1 capturing the rising trend of risk to trigger more proactive interven-
+tions during rapid escalation. This strategy forms a closed loop with the environmental
+factor modeling module, as control actions modify subsequent environmental sequences,
+which are fed back through st+1 to update rt+1, thereby realizing a predictive control chain
+for tomato late blight characterized by environmental induction, risk accumulation, and
+proactive mitigation. In conjunction with the visual module, environmental tokens provide
+prospective background context while visual tokens supply instantaneous symptom evi-
+dence, and the masked attention mechanism ensures high-confidence interactions within
+synchronized windows, enabling earlier, more robust, and actionable risk assessment and
+control decisions during the latent stage.
+ImageEnvironmentSensorsOther Conditions
+FusionattentionFusionAttention
+FusionAttention
+ImageImageSensorsOthers
+SensorsOthersFusionattentionImageEnvironmentSensorsOther Conditions
+ImageEnvironmentSensorsOther Conditions
+ImageEnvironmentSensorsOther Conditions
+Figure 4. Operational flow of the Cross-Modal Risk Fusion and Predictive Control Strategy. Visual
+embeddings from the perception module and temporal environmental features are projected into
+a unified semantic token space alongside control condition tokens. A multi-layer Transformer
+fusion backbone with masked cross-attention facilitates the interaction between these heterogeneous
+modalities. The system outputs a continuous disease risk score ( rt) and maps this risk to specific
+greenhouse regulation decisions (ventilation, dehumidification, lighting) via a policy network.
+https://doi.org/10.3390/horticulturae12030299
+
+--- PAGE 12 ---
+Horticulturae 2026, 12, 299 12 of 28
+4. Results and Discussion
+4.1. Experimental Configuration
+4.1.1. Implementation Details
+The experimental hardware infrastructure was constructed using a high-performance
+deep learning workstation coupled with an industrial-grade greenhouse sensing network.
+The central computing server operated on the Ubuntu 22.04 LTS system, equipped with
+an Intel Xeon Gold 6226R CPU (2.90 GHz, 16 cores) and 128 GB of DDR4 ECC RAM to
+handle large-scale multimodal data preprocessing. To satisfy the intensive computational
+requirements of the proposed Transformer-based visual encoder and temporal networks,
+model training and inference were accelerated by two NVIDIA GeForce RTX 3090 GPUs
+(24 GB GDDR6X VRAM each), interconnected via NVLink to support high-throughput
+parallel computing. On the greenhouse side in Bayannur, data acquisition relied on an
+RS485 Modbus IoT system. Environmental variables, including air temperature and relative
+humidity, were monitored using high-precision SHT30-based sensors (Sensirion, Stäfa,
+Switzerland, accuracy ± 0.2 ◦C, ±2%), while leaf wetness was recorded via dielectric
+RY-CYM/485 sensors (Handan Yunnong Intelligent Agricultural Technology Co., Ltd.,
+Handan, China) calibrated to a 0–100% range. Visual data were captured by Hikvision DS-
+2CD series high-definition IP network cameras (Hangzhou Hikvision Digital Technology
+Co., Ltd., Hangzhou, China) installed at canopy height, configured to acquire images at
+a resolution of 2560 × 1440 pixels, ensuring high-fidelity input for the visual symptom
+perception module.
+From the software perspective, the proposed framework was implemented using
+Python 3.9 and the PyTorch 2.0.1 deep learning library, accelerated by CUDA 11.8 and
+cuDNN 8.5 backends. To ensure experimental reproducibility, all random seeds for Python,
+NumPy, and PyTorch were fixed at42. Image preprocessing and augmentation, including
+random cropping and illumination normalization, were executed using OpenCV 4.7 and the
+Albumentations 1.3 library, while environmental time-series data cleaning and alignment
+were handled via Pandas 2.0. The communication interface between the risk prediction
+model and the greenhouse control system was deployed as a RESTful API using the
+FastAPI framework, allowing for real-time risk score transmission and control instruction
+dispatch. This modular software architecture ensured the stability of the training process
+and facilitated the seamless integration of the predictive control strategy into the existing
+greenhouse management system.
+During the model training phase, a rigorous experimental design was implemented
+to address the inherent temporal dependencies of the collected data. Unlike conventional
+random shuffling, which may introduce look-ahead bias in time-series forecasting, the
+dataset was partitioned into training (70%), validation (15%), and test (15%) subsets using
+a strict chronological splitting strategy. To explicitly prevent temporal information leakage
+across these data boundaries caused by the historical environmental window a temporal
+buffer interval strictly equal to L = 1440, corresponding to exactly 24 h of minute-level
+sensor observations, was enforced between the adjacent subsets. This gap guarantees
+that no single continuous sliding window spans multiple partitions, ensuring that the
+model is trained exclusively on historical environmental trajectories and evaluated on
+truly unseen future data, thereby faithfully simulating real-world deployment scenarios.
+Visual inputs were standardized to 224 × 224 pixels to feed the hierarchical visual encoder,
+which was configured with depths of {2, 2, 6, 2} to capture multi-scale features. Cross-
+modal embeddings were projected into a 256-dimensional space and fused via multi-head
+attention (h = 8). The network was optimized using AdamW (weight decay 0.05, batch size
+32, initial learning rate 1 × 10−4 with Cosine Annealing). The training spanned 200 epochs
+with early stopping (patience 20) and a loss balancing coefficient λ = 0.6. Furthermore,
+https://doi.org/10.3390/horticulturae12030299
+
+--- PAGE 13 ---
+Horticulturae 2026, 12, 299 13 of 28
+to evaluate the model’s generalization ability across different environmental windows
+and mitigate overfitting to specific short-term microclimatic patterns, a 5-fold time-series
+cross-validation strategy incorporating the same buffer gap principle was adopted. This
+approach rotates the validation fold along the temporal axis, ensuring that the reported
+performance metrics reflect robust stability under varying seasonal conditions and disease
+prevalence rates.
+4.1.2. Evaluation Metrics
+To comprehensively evaluate model performance in tomato late blight recognition and
+risk prediction tasks, accuracy, F1-score, area under the receiver operating characteristic
+curve (AUC), and risk lead time were adopted as evaluation metrics. These metrics
+respectively assess overall discriminative capability, class-balanced performance, threshold-
+independent discrimination ability, and early warning effectiveness. The mathematical
+definitions of the evaluation metrics are given as follows.
+Accuracy = TP + TN
+TP + TN + FP + FN . (12)
+F1 = 2 · TP
+2 · TP + FP + FN . (13)
+AUC =
+Z 1
+0
+TPR(x) dFPR(x). (14)
+∆T = tonset − talert. (15)
+In these equations, TP, TN , FP, and FN denote the numbers of true positives, true
+negatives, false positives, and false negatives, respectively. TPR and FPR represent the true
+positive rate and false positive rate under different threshold valuesx, where TPR = TP
+TP+FN
+and FPR = FP
+FP+TN . Risk lead time is used to quantify the duration by which effective
+warnings are issued prior to visible disease onset. Here, tonset denotes the time of first
+manual or visual confirmation of disease occurrence, while talert denotes the time when the
+predicted risk score first exceeds a predefined threshold. ∆T represents the risk lead time
+and characterizes the prospective early warning capability of the model.
+4.1.3. Baseline
+To comprehensively evaluate the performance of the proposed method in tomato
+late blight risk perception and prediction tasks, a set of representative deep learning
+models was selected as comparison baselines, covering two typical research paradigms,
+namely visual perception and environmental temporal modeling. In the visual modeling
+category, ResNet50 [69], as a classical CNN, effectively alleviates training difficulties in
+deep architectures through residual connections and provides stable feature extraction
+capability. EfficientNet-B0 [ 70] significantly reduces the number of model parameters
+while maintaining recognition accuracy, demonstrating high computational efficiency and
+practical deployment potential. ViT [ 71] employs self-attention mechanisms to model
+global image features and captures long-range dependencies across spatial regions. Swin
+Transformer [72] integrates local and global feature representations through hierarchical
+window-based attention mechanisms and exhibits strong adaptability in complex agricul-
+tural scenarios. In the environmental temporal modeling category, LSTM [73] effectively
+characterizes long-term temporal dependencies via gated structures and has been widely
+applied in agricultural environment prediction tasks. GRU [ 74] further simplifies the
+parameter structure while preserving modeling capability, thereby improving training
+https://doi.org/10.3390/horticulturae12030299
+
+--- PAGE 14 ---
+Horticulturae 2026, 12, 299 14 of 28
+efficiency. Together, these models constitute a representative baseline system and provide a
+sufficient and reliable reference for validating the performance of the proposed method.
+4.2. Comparison with Representative Tomato Late Blight Detection Baselines
+The objective of this experiment is to systematically evaluate the performance dif-
+ferences among distinct modeling paradigms in tomato late blight recognition and risk
+early warning tasks, with a particular focus on comparing conventional visual recognition
+methods, environmental temporal modeling approaches, and the proposed multimodal
+temporal risk perception framework. By conducting comparisons on the same dataset
+under unified evaluation metrics, this experiment aims to address two key questions. First,
+it is examined whether single-modality visual models exhibit inherent limitations during
+the early stages of disease development. Second, it is investigated whether the introduc-
+tion of environmental predisposing factors and temporal modeling enables a substantial
+improvement in the prospective capability of risk prediction while maintaining recognition
+accuracy. The results reported in Table 2 clearly reflect the performance differences among
+the evaluated methods in terms of accuracy, F1-score, AUC, and risk lead time, thereby pro-
+viding quantitative evidence for analyzing the role of multimodal and temporal modeling
+in tomato late blight risk perception.
+Table 2. Quantitative performance comparison of the proposed multimodal framework against state-
+of-the-art vision-only baselines (ResNet50, EfficientNet-B0, ViT, Swin Transformer) and environment-
+only temporal baselines (LSTM, GRU). The evaluation metrics include Accuracy, F1-score, Area Under
+the Curve (AUC), and Risk Lead Time (hours), highlighting the superior early warning capability
+and classification precision of the proposed fusion approach compared to single-modality methods.
+Method Accuracy F1-Score AUC Risk Lead Time (h)
+ResNet50 (vision-only) 0.914 0.902 0.942 5.6
+EfficientNet-B0 (vision-only) 0.921 0.909 0.948 6.1
+ViT (vision-only) 0.928 0.917 0.955 6.8
+Swin Transformer (vision-only) 0.934 0.924 0.962 7.4
+LSTM (environment-only) 0.886 0.871 0.931 14.2
+GRU (environment-only) 0.892 0.878 0.936 15.0
+Ours (multimodal + temporal + control) 0.952 0.944 0.975 21.6
+As shown in Table 2 and Figure 5, vision-based models exhibit overall stable perfor-
+mance in recognition accuracy. ResNet50, as a classical convolutional architecture, demon-
+strates strong capability in modeling local texture patterns; however, its reliance on local
+receptive fields limits its ability to capture cross-region lesion associations. EfficientNet-B0
+achieves a better balance between parameter efficiency and feature representation, result-
+ing in moderate performance improvement. ViT enhances global modeling of complex
+backgrounds and multi-scale lesion patterns through self-attention mechanisms, leading
+to further improvements in AUC and F1-score. Swin Transformer introduces hierarchical
+window-based attention, which strengthens local structural modeling while preserving
+global contextual awareness, thereby achieving the best performance among vision-only
+models. Nevertheless, despite their advantages in accuracy and AUC, visual models exhibit
+relatively limited risk lead times, indicating that their mathematical formulation is pre-
+dominantly dependent on observable image features at the current time step and lacks the
+ability to extrapolate disease risk during latent stages when visible symptoms are absent.
+In contrast, environment-only temporal models such as LSTM and GRU achieve signif-
+icantly longer risk lead times, although with slightly lower classification accuracy. This
+behavior can be attributed to their gated recurrent structures, which effectively integrate
+long-term environmental accumulation effects and enable early detection of sustained
+https://doi.org/10.3390/horticulturae12030299
+
+--- PAGE 15 ---
+Horticulturae 2026, 12, 299 15 of 28
+high-humidity and condensation-related predisposing patterns. The proposed multimodal
+temporal method achieves the best performance across all metrics. Its mathematical essence
+lies in jointly constraining the risk function by instantaneous visual evidence and long-term
+environmental trajectories within a unified feature space, thereby extending effective early
+warning horizons while simultaneously improving discriminative accuracy. These results
+validate the theoretical soundness and practical value of the proposed framework for early
+risk perception and predictive control of tomato late blight.
+ResNet50 EfficientNet-B0
+ViT
+Swin Transformer LSTM GRU Ours
+Method
+0.86
+0.88
+0.90
+0.92
+0.94
+0.96
+F1-score
+Figure 5. Box plot visualization comparing the F1-score distributions of various disease detection
+models across the test set. The plot contrasts the performance stability and median accuracy of
+vision-based models (ResNet50, EfficientNet-B0, ViT, Swin Transformer), environment-based models
+(LSTM, GRU), and the proposed multimodal method (Ours). The proposed method demonstrates a
+higher median F1-score and reduced variance, indicating greater robustness in identifying tomato
+late blight under varying greenhouse conditions.
+4.3. Extended Analysis of Environmental Factor Modeling
+This experiment is designed to systematically evaluate the early risk prediction capa-
+bility of different environmental factor modeling approaches before the visible onset of
+tomato late blight. The focus is placed on whether stable, early, and low false-alarm risk
+perception can be achieved using environmental time series information alone. Unlike
+conventional disease recognition experiments, final classification accuracy is not treated
+as the sole objective. Instead, multiple indicators, including AUC, accuracy, F1-score, risk
+lead time, false alert rate, and detection stability, are jointly considered to comprehensively
+assess model effectiveness in practical early warning scenarios. By comparing empirical
+threshold-based models, linear statistical models, classical recurrent neural networks, and
+the proposed deep temporal environmental modeling approach within a unified exper-
+imental framework, the influence of different modeling assumptions and mathematical
+structures on risk prediction performance is explicitly revealed, thereby validating the
+theoretical necessity and engineering value of temporal environmental modeling for late
+blight prevention.
+As reported in Table 3 and Figure 6, the threshold-based risk index exhibits the
+weakest overall performance, particularly in terms of AUC, stability, and false alert rate.
+This limitation is closely related to its reliance on fixed rules and static decision bound-
+aries, which are inherently incapable of adapting to nonlinear couplings and temporal
+scale variations among environmental variables. Logistic regression achieves moderate
+https://doi.org/10.3390/horticulturae12030299
+
+--- PAGE 16 ---
+Horticulturae 2026, 12, 299 16 of 28
+improvements by incorporating multivariate linear combinations; however, its dependence
+on linear separability assumptions restricts its ability to capture complex risk structures
+formed through long-term environmental accumulation, resulting in limited gains in
+lead time and stability. In contrast, LSTM and GRU significantly enhance early warning
+performance through gated recurrent mechanisms that dynamically memorize historical
+environmental states. From a mathematical perspective, these models perform weighted
+temporal integration over environmental sequences, thereby strengthening sensitivity to
+persistent high-humidity and repeated condensation patterns, which leads to longer risk
+lead times, higher AUC values, reduced false alarms, and improved stability. The pro-
+posed environmental modeling approach further introduces deep temporal representations
+and routing-based selection mechanisms, enabling adaptive emphasis on time segments
+that contribute most to risk formation while suppressing redundant or noisy information.
+This structure reinforces the representation of critical predisposing stages and produces
+smoother, more coherent risk trajectories along the temporal axis. Consequently, superior
+performance is achieved across lead time, false alert rate, and detection stability metrics,
+demonstrating that performance gains arise not merely from increased model complexity,
+but from a more faithful mathematical characterization of temporal dependency structures
+and risk accumulation mechanisms.
+AUC
+Accuracy
+F1-score
+Lead time
+False alert
+Stability
+Multimodal Performance Comparison
+Threshold-based
+Logistic regression
+LSTM (env)
+GRU (env)
+Ours-env
+Figure 6. Radar chart providing a multi-dimensional performance assessment of environmental
+modeling techniques for disease risk prediction. The axes represent six key evaluation criteria: AUC,
+Accuracy, F1-score, Risk Lead Time, False Alert Rate (inverted scale), and Stability. The expansive
+coverage of the “Ours-env” method (red line) illustrates its comprehensive superiority over threshold-
+based, logistic regression, and standard recurrent neural network baselines in balancing sensitivity,
+specificity, and early warning capabilities.
+https://doi.org/10.3390/horticulturae12030299
+
+--- PAGE 17 ---
+Horticulturae 2026, 12, 299 17 of 28
+Table 3. Comparative analysis of different environmental factor modeling approaches for the specific
+task of early risk prediction prior to visible symptom onset. The table evaluates rule-based (Thresh-
+old), statistical (Logistic Regression), and deep temporal (LSTM, GRU, Ours-env) methods across
+comprehensive metrics including AUC, Accuracy, F1-score, Risk Lead Time, False Alert Rate, and
+Prediction Stability, demonstrating the efficacy of the proposed deep temporal network in reducing
+false alarms and extending warning horizons.
+Method AUC Accuracy F1-Score Risk Lead Time (h) False Alert Rate (%) Stability (%)
+Threshold-based risk index 0.842 0.781 0.754 10.5 12.8 68.3
+Logistic regression (env) 0.873 0.806 0.792 12.1 10.6 71.5
+LSTM (env) 0.931 0.864 0.851 14.2 8.1 78.9
+GRU (env) 0.936 0.871 0.859 15.0 7.6 80.4
+Ours-env 0.957 0.901 0.892 19.4 5.2 87.6
+4.4. Comprehensive Evaluation of Greenhouse Control Linkage
+The purpose of this experiment is to verify whether the proposed risk perception
+model not only achieves advantages at the prediction level, but also generates quantifiable
+and sustainable disease control effects through linkage with greenhouse control strate-
+gies under real production conditions. Accordingly, two management modes, namely
+risk-independent control and risk-driven linkage control, are compared under identical
+cultivation settings. The evaluation focuses on multiple dimensions, including disease
+outcomes, environmental predisposing states, production inputs, and outputs. Rather than
+assessing isolated indicators, this experiment examines whether predicted risk information
+is effectively translated into targeted environmental regulation and whether such regula-
+tion forms positive synergies among disease suppression, pesticide reduction, and yield
+improvement, thereby validating the practical value of the prediction–control closed loop
+in protected agriculture.
+As shown in Table 4 and Figure 7, the introduction of risk-driven control linkage leads
+to substantial reductions in both disease incidence and severe symptom rates, indicating
+that risk-based environmental interventions effectively weaken disease development con-
+ditions before the diffusion stage. Meanwhile, significant decreases are observed in mean
+relative humidity, duration of high-humidity exposure, and leaf wetness duration, suggest-
+ing that the control strategy effectively redistributes high-risk environmental states over
+time and reduces cumulative predisposing effects. The concurrent reduction in high-risk
+duration and event frequency further demonstrates that risk-driven regulation not only
+lowers risk magnitude but also improves its temporal stability, thereby reducing disease
+triggering probability. From an input–output perspective, linked control substantially
+reduces pesticide application frequency and total dosage while increasing marketable yield
+and lowering disease-induced yield loss. This outcome reflects that targeted environmen-
+tal regulation can partially substitute chemical interventions. Although the frequency
+of environmental control actions increases under linked control, these actions are more
+fine-grained and targeted. From a control-theoretic viewpoint, such high-frequency, low-
+amplitude adjustments help maintain system states within safe operating ranges and avoid
+delayed, large-scale corrective interventions. Overall, these results validate the rationality
+of using predicted risk as a control input from both mathematical behavior and system
+response perspectives, demonstrating that a stable closed loop can be formed in complex
+greenhouse systems and that disease management can be shifted from experience-driven
+practices to proactive regulation based on risk evolution mechanisms.
+https://doi.org/10.3390/horticulturae12030299
+
+--- PAGE 18 ---
+Horticulturae 2026, 12, 299 18 of 28
+Table 4. Field evaluation results comparing the agronomic and environmental outcomes of the
+proposed risk-driven predictive control strategy (“With linkage”) versus a standard risk-independent
+management strategy (“Without linkage”). Key performance indicators include disease incidence
+rates, microclimatic conditions (mean humidity, wetness duration), pesticide usage (frequency and
+dosage), and economic output (marketable yield). The data confirms that the closed-loop control
+system significantly mitigates disease severity and reduces chemical inputs while maintaining yield.
+Metric Without Linkage With Linkage (Ours)
+Disease incidence (%, plants affected/total plants) 18.7 (56/300) 9.4 (28/300)
+Severe disease rate (%, late-stage symptoms) 7.9 3.1
+Mean relative humidity (%, daily average ± std) 83.5 ± 6.2 76.2 ± 4.8
+Time above high-humidity threshold (h/day, RH> 85%) 5.3 2.4
+Leaf wetness duration (h/day, mean ± std) 6.1 ± 1.4 3.4 ± 0.9
+High-risk duration (h/day, rt > τ) 4.8 2.1
+Number of high-risk events (events/week) 3.6 1.5
+Pesticide applications (times/season) 6.0 4.0
+Total pesticide dosage (g/m2/season) 42.5 28.7
+Marketable yield (kg/m2, mean ± std) 9.8 ± 0.6 10.6 ± 0.4
+Yield loss due to disease (%) 11.2 4.9
+Environmental control actions (adjustments/day) 1.3 2.8
+0 10 20 30 40 50 60 70
+Time (Hours)
+40
+50
+60
+70
+80
+90
+100Relative Humidity (%)
+RH (Without Linkage)
+RH (With Linkage)
+Risk Score (Without)
+Risk Score (With)
+Control Active
+0.0
+0.2
+0.4
+0.6
+0.8
+1.0
+1.2
+Disease Risk Score (0-1)
+Figure 7. Comparison of microclimatic regulation capabilities during a typical high-risk interval. The
+curves illustrate the temporal evolution of Relative Humidity (RH) and Leaf Wetness Duration (LWD)
+under the proposed closed-loop control strategy versus the standard management. The shaded
+regions indicate periods where the predictive system triggered active ventilation or dehumidification,
+successfully curbing humidity spikes and maintaining environmental variables below infection
+thresholds, whereas the control group remained in a high-risk state.
+4.5. Ablation Study of the Proposed System Components
+The ablation study is designed to systematically verify the practical contributions and
+synergistic effects of each functional module within the proposed framework, and to clarify
+the functional roles of different components in disease recognition accuracy and early risk
+warning capability. By sequentially removing key components, including environmental
+temporal modeling, visual symptom perception, cross-modal fusion, and risk-to-control
+mapping, while keeping the dataset and training strategy unchanged, performance vari-
+ations can be analyzed from a structural perspective. This design enables an explicit
+examination of whether the overall performance improvement relies on a single dominant
+module or arises from complementary interactions among multiple modules. In particular,
+the risk lead time metric provides an intuitive measure of how different modules contribute
+https://doi.org/10.3390/horticulturae12030299
+
+--- PAGE 19 ---
+Horticulturae 2026, 12, 299 19 of 28
+to modeling risk evolution during the latent stage of disease development, thereby offering
+structural evidence for the rationality of the proposed model design.
+As shown in Table 5 and Figure 8, the full model achieves the best performance across
+all metrics, demonstrating the overall advantage of the multimodal temporal modeling and
+risk fusion framework. When the environmental temporal modeling module is removed,
+the most pronounced degradation is observed in risk lead time, whereas classification-
+related metrics exhibit relatively limited changes. This observation indicates that the
+environmental module primarily the modeling of historical risk accumulation effects,
+and its absence causes the model to degenerate into a short-sighted assessment based
+mainly on the current state, thereby limiting its ability to extrapolate risk during the
+latent stage. When the visual symptom perception module is removed, the risk lead
+time remains relatively high, but accuracy and F1-score decrease noticeably, suggesting
+that environmental predisposing factors provide stable prospective information, while
+the visual module acts as an instantaneous constraint on risk estimation that improves
+discrimination of the current disease state. Replacing cross-modal fusion with simple
+late-stage score averaging results in consistent performance degradation across all metrics,
+highlighting the importance of dynamic weighting of heterogeneous information sources
+in the feature space rather than treating them as independent or equally weighted signals.
+Notably, removing the risk-to-control mapping does not affect prediction metrics, which is
+theoretically expected because this module does not participate in risk estimation itself but
+contributes at the system level through closed-loop regulation, with its effects primarily
+reflected in long-term environmental feedback and disease outcomes. Overall, the ablation
+results confirm from both structural and functional perspectives that the modular design of
+the proposed model is necessary and complementary, and that balanced improvements
+in accuracy, stability, and foresight can only be achieved through the joint operation of
+all components.
+Ours (full)
+w/o env. temporal
+modeling
+w/o visual symptom
+perception
+w/o cross-modal
+fusion
+w/o risk-to-control
+mapping
+0.952
+0.938
+0.924
+0.933
+0.952
+Accuracy
+Ours (full)
+w/o env. temporal
+modeling
+w/o visual symptom
+perception
+w/o cross-modal
+fusion
+w/o risk-to-control
+mapping
+0.944
+0.928
+0.912
+0.923
+0.944
+F1-score
+Ours (full)
+w/o env. temporal
+modeling
+w/o visual symptom
+perception
+w/o cross-modal
+fusion
+w/o risk-to-control
+mapping
+0.975
+0.964
+0.952
+0.961
+0.975
+AUC
+Ours (full)
+w/o env. temporal
+modeling
+w/o visual symptom
+perception
+w/o cross-modal
+fusion
+w/o risk-to-control
+mapping
+21.6
+8.0
+19.1
+16.3
+21.6
+Risk Lead Time (hours)
+Figure 8. Bar chart visualization of the ablation study, displaying the impact of component removal
+on four key performance metrics: Accuracy, F1-score, AUC, and Risk Lead Time. The comparison
+reveals that the Environmental Temporal Modeling module is critical for maximizing Lead Time,
+while the Visual Perception module primarily sustains recognition Accuracy and F1-score, confirming
+the complementary roles of the multimodal architecture in the full system.
+https://doi.org/10.3390/horticulturae12030299
+
+--- PAGE 20 ---
+Horticulturae 2026, 12, 299 20 of 28
+Table 5. Ablation study results isolating the contribution of individual system components to overall
+model performance. The table contrasts the full model against variants lacking the Environmental
+Temporal Modeling, Visual Symptom Perception, Cross-Modal Fusion, or Risk-to-Control Mapping
+modules. The decline in metrics (Accuracy, F1, AUC, Lead Time) upon the removal of specific
+components validates the necessity of the synergistic integration of multimodal perception and
+temporal modeling for optimal risk prediction.
+Variant Accuracy F1-Score AUC Risk Lead Time (h)
+Ours (full) 0.952 0.944 0.975 21.6
+w/o environmental temporal modeling 0.938 0.928 0.964 8.0
+w/o visual symptom perception 0.924 0.912 0.952 19.1
+w/o cross-modal fusion 0.933 0.923 0.961 16.3
+w/o risk-to-control mapping 0.952 0.944 0.975 21.6
+5. Discussion
+5.1. Comparison with Existing Literature and Hypothesis Validation
+The experimental outcomes of this study strongly support our initial hypothesis:
+explicitly integrating long-horizon environmental accumulation with instantaneous visual
+symptom perception significantly extends the early warning lead time and enhances the
+stability of risk assessment compared to single-modality approaches. When contrasted with
+recent vision-only disease recognition models [37,39], which predominantly excel during
+the post-event symptomatic phase, our multimodal framework successfully mitigates the
+high misclassification rates typically observed during latent or early infection stages [41].
+This confirms that isolating the plant from its dynamic environmental context severely limits
+the potential for proactive management [42]. Furthermore, our deep temporal modeling of
+environmental factors demonstrates clear superiority over traditional empirical threshold-
+based methods [45] and conventional statistical models [50]. While previous studies have
+highlighted the instability and weak generalization of static rules under heterogeneous
+greenhouse conditions [ 46,47], our continuous risk semantic space effectively captures
+the nonlinear, cumulative nature of predisposing factors—such as sustained humidity
+and condensation—without relying on rigid prior assumptions. Most critically, whereas
+recent advances in smart agriculture have explored multimodal temporal fusion [53,54],
+the majority of these efforts have historically treated environmental prediction and disease
+diagnosis as disconnected diagnostic tasks [ 24,58]. Our findings validate that linking a
+continuous, unified risk assessment directly to a predictive control policy successfully
+bridges this critical gap, advancing the field from isolated monitoring toward a truly
+proactive, closed-loop greenhouse management paradigm.
+5.2. Mechanistic Interpretation of Performance Gains
+The results demonstrate that integrating environmental temporal modeling with early
+visual perception yields not only higher recognition metrics but also a more meaningful
+improvement in forward-looking risk prediction, particularly in risk lead time and sta-
+bility. This advantage is consistent with the disease mechanism of tomato late blight in
+protected cultivation: infection is typically enabled by sustained predisposing conditions
+(e.g., prolonged high relative humidity, repeated condensation events, and persistent leaf
+wetness), followed by a latent phase during which pathogen development progresses
+before clear lesions become visually apparent. Vision-only baselines therefore tend to
+peak in confidence only after macroscopic symptoms emerge, which inherently constrains
+lead time; moreover, early-stage leaf appearance is easily confounded by illumination
+variation, occlusion, and background clutter, reducing reliability. In contrast, the proposed
+deep temporal environmental module captures long-horizon, nonlinear accumulation of
+https://doi.org/10.3390/horticulturae12030299
+
+--- PAGE 21 ---
+Horticulturae 2026, 12, 299 21 of 28
+predisposing exposure by modeling coupled variables such as temperature, humidity, leaf
+wetness, and light intensity as evolving trajectories rather than isolated instantaneous states.
+This design aligns with the cumulative nature of infection risk and enables the risk score to
+rise earlier than symptom-driven detectors, explaining the observed gain in early-warning
+lead time.
+The stability improvement arises from the way the model distinguishes persistent
+risk evolution from short-lived microclimate fluctuations. Threshold-based and simpler
+statistical models respond sharply to transient excursions (e.g., brief humidity spikes or
+sensor noise), which often yields oscillatory alerts and poor operational trust. By learning
+temporal context, the proposed environmental encoder produces smoother risk trajectories
+that reflect sustained exposure, thereby reducing false alerts and improving prediction
+stability. Meanwhile, the visual branch provides complementary evidence that helps
+calibrate the risk estimate when the environment is temporarily favorable but plants
+remain healthy, and it strengthens risk confidence when weak lesions and subtle texture
+changes begin to appear. The cross-modal fusion in a unified risk space reconciles these two
+forms of evidence—environmental predisposition and incipient visual manifestations—so
+the overall risk estimate becomes less sensitive to modality-specific uncertainty and more
+robust under real greenhouse variability. Ablation results support this interpretation by
+showing that removing either the temporal environmental modeling or the visual cues
+degrades lead time, stability, and/or false alert control, indicating that the gain is not a
+marginal ensemble effect but a mechanistically coherent complementarity.
+Despite these strengths, the approach also has practical limitations that should be
+acknowledged. The reliability of risk prediction depends on the continuity and quality of
+sensor measurements and on stable image acquisition; sensor drift, missing data, camera
+viewpoint changes, or severe canopy occlusion can degrade performance. In addition, the
+current risk-to-control linkage is designed to be engineering-feasible and interpretable,
+but it may not yet fully optimize multi-objective trade-offs (disease suppression versus
+energy cost, crop growth stage, cultivar resistance, and concurrent stresses). Finally, gener-
+alization across regions, seasons, and greenhouse designs requires broader validation and,
+potentially, domain adaptation and uncertainty calibration to provide confidence-aware
+decision support.
+5.3. Implications for Growers and Greenhouse Management Systems
+From the standpoint of growers and greenhouse operators, the primary value of the
+proposed framework is that it converts heterogeneous sensing streams into a continuous,
+interpretable risk signal that can be acted upon before visible symptoms emerge. In
+practice, late blight outbreaks are rarely instantaneous; they are often preceded by periods
+of sustained humidity and leaf wetness that can be mitigated through timely ventilation,
+dehumidification, heating, or irrigation scheduling. By providing early warning tied to
+risk evolution rather than to visible lesions, the system supports earlier, smaller, and
+more targeted operational adjustments that reduce the formation of disease-favorable
+microclimates at the source. This capability is especially important in high-density, high-
+investment protected tomato production, where delayed interventions can lead to rapid
+spread, higher chemical dependency, and yield/quality penalties.
+The framework is also compatible with existing greenhouse automation workflows
+because the risk score can be directly integrated as a supervisory signal for control logic.
+Instead of relying on fixed thresholds that often require repeated manual retuning across
+facilities and seasons, the learned risk trajectory provides a more adaptive indicator for
+when to intensify ventilation or dehumidification and when to relax actions to avoid
+unnecessary energy expenditure. The visual module further improves operational trust
+https://doi.org/10.3390/horticulturae12030299
+
+--- PAGE 22 ---
+Horticulturae 2026, 12, 299 22 of 28
+by reducing false alarms caused by isolated environmental fluctuations: when subtle pre-
+symptomatic visual cues are absent, the fused risk estimate can be moderated, whereas
+emerging weak lesions can reinforce the urgency of intervention even if environmental
+variables have recently improved. At the production level, this coupling of prediction
+and regulation offers a practical pathway toward reduced pesticide frequency and dosage
+while maintaining or improving marketable yield, supporting the broader goals of low-
+chemical and sustainable protected horticulture. Looking ahead, embedding the approach
+into decision-support interfaces with uncertainty reporting and extending it to additional
+sensors and other environment-induced diseases can further increase adoption value and
+scalability for intelligent greenhouse management.
+5.4. Generalizability and Domain Adaptation
+Given that the proposed multimodal framework involves a relatively complex archi-
+tecture, the risk of overfitting on the moderately sized dataset (approximately 18,600 images
+and corresponding environmental series from a single greenhouse) was strictly mitigated
+through comprehensive regularization strategies. In addition to early stopping and weight
+decay, the training pipeline incorporated dynamic online data augmentation for the visual
+inputs, Dropout and DropPath (stochastic depth) regularization within the hierarchical vi-
+sual encoder and Transformer fusion blocks, and feature-level masking during cross-modal
+attention. These mechanisms collectively force the network to learn robust, generalized
+representations rather than memorizing specific training samples. The efficacy of these
+strategies is evidenced by the 5-fold time-series cross-validation results, where the perfor-
+mance variance across different temporal folds remained remarkably low. This minimal
+fluctuation confirms that the model achieves stable generalization within the target domain,
+effectively avoiding overfitting to specific short-term microclimatic anomalies or localized
+visual artifacts.
+Although the multimodal predictive control system demonstrates significant internal
+efficacy and stability, the current model was trained and validated using data from one
+continuous winter-to-spring production cycle in Northern China. While the fundamental
+biological mechanisms driving tomato late blight—specifically its strict dependence on
+prolonged high humidity, leaf condensation, and specific temperature windows—are
+universal across different geographic regions, the raw distribution and baseline fluctuations
+of environmental sensor data are inherently influenced by local external climates and
+specific greenhouse structural characteristics. Consequently, if the system were directly
+deployed in a facility with a markedly different climate regime, such as a tropical or
+Mediterranean environment, the baseline microclimate dynamics could shift, potentially
+leading to suboptimal risk threshold triggering or altered early warning lead times. To
+ensure robust performance in entirely new environments, the system is designed to undergo
+a lightweight recalibration process rather than complete retraining from scratch. Because
+the visual perception module learns morphological and textural lesion features that remain
+highly consistent across different regions, domain adaptation would primarily focus on the
+environmental temporal module. By collecting local microclimate data for a brief initial
+period without requiring manual disease annotations, unsupervised domain adaptation
+techniques or statistical re-normalization can be applied to align the new environmental
+feature distribution with the source domain. This localized recalibration strategy would
+effectively adapt the predictive control policy to the specific thermodynamic behavior and
+ventilation efficiency of the new greenhouse, thereby ensuring that proactive interventions
+remain both timely and resource-efficient across diverse agricultural settings.
+https://doi.org/10.3390/horticulturae12030299
+
+--- PAGE 23 ---
+Horticulturae 2026, 12, 299 23 of 28
+5.5. Limitations and Future Work
+Although the proposed tomato late blight risk perception and predictive control sys-
+tem demonstrates strong early warning capability and effective control performance in
+real greenhouse environments, several aspects remain to be further improved. First, the
+approach relies on multisource sensors and fixed-view imaging devices, and its perfor-
+mance is influenced by sensor deployment density, device stability, and data continuity.
+Under extreme environmental fluctuations or sensor malfunction, risk estimation accu-
+racy may be affected. Second, the current control strategy primarily maps risk scores and
+their temporal trends to control actions through rule-based mechanisms, without fully
+accounting for differences in crop growth stages, varietal resistance, or concurrent multiple
+diseases, which may limit the granularity of control decisions. Future work should include
+long-term validation across larger-scale and multi-regional greenhouse environments to
+assess generalization under diverse climatic conditions and cultivation practices. Incorpo-
+rating crop physiological indicators, growth stage information, and historical management
+records could further enhance the completeness of the risk perception framework. In
+addition, adaptive control strategies based on reinforcement learning or optimal control
+could be explored to dynamically optimize decisions under multi-objective constraints.
+Extending the framework to multi-disease and multi-crop scenarios and integrating it
+with existing greenhouse management platforms are also expected to further increase its
+practical applicability and deployment potential in real agricultural production.
+6. Conclusions
+This study successfully established and validated a proactive multimodal risk per-
+ception and predictive control framework for managing tomato late blight in greenhouse
+environments, directly addressing the limitations of passive, post-event disease monitor-
+ing. By explicitly integrating the long-horizon nonlinear accumulation of environmental
+predisposing factors—such as temperature, humidity, and leaf wetness—with early-stage
+visual symptom representations, the proposed system constructs a unified semantic risk
+space. This cross-modal synergy effectively leverages environmental trends to validate
+subtle visual anomalies, generating a highly stable pre-symptomatic risk signal. Experi-
+mental evaluations objectively confirmed our initial hypothesis, demonstrating that the
+multimodal approach achieves robust early warning capabilities with an accuracy of 0.95,
+an F1-score of 0.94, an AUC of 0.98, and a critical risk lead time exceeding 20 h. Crucially,
+the framework successfully closes the conceptual loop established in the Introduction
+by translating these continuous risk scores into an actionable, differentiable mapping for
+automated greenhouse regulation. Field control trials provided quantitative evidence that
+this risk-driven predictive control strategy significantly mitigates disease incidence and
+severity, reduces the frequency and dosage of chemical pesticide applications, and main-
+tains marketable yield. Ultimately, this research shifts the paradigm of greenhouse disease
+management from reactive treatment to preemptive environmental modulation, provid-
+ing a highly scalable and scientifically grounded foundation for the intelligent control of
+environment-induced agricultural pathologies.
+Author Contributions: Conceptualization, P .G., P .Y., T.K. and Y.S.; Data curation, Y.W. and F.X.;
+Formal analysis, S.W.; Funding acquisition, Y.S.; Investigation, S.W.; Methodology, P .G., P .Y. and T.K.;
+Project administration, Y.S.; Resources, Y.W. and F.X.; Software, P .G., P .Y. and T.K.; Supervision, Y.S.;
+Validation, S.W.; Visualization, Y.W. and F.X.; Writing—original draft, P .G., P .Y., T.K., S.W., Y.W., F.X.
+and Y.S. All authors have read and agreed to the published version of the manuscript.
+Funding: This research was funded by National Natural Science Foundation of China grant
+number 61202479.
+https://doi.org/10.3390/horticulturae12030299
+
+--- PAGE 24 ---
+Horticulturae 2026, 12, 299 24 of 28
+Data Availability Statement: The original contributions presented in this study are included in
+the article. To ensure the full reproducibility of the proposed multimodal predictive control frame-
+work, the complete source code, model architectures, and data processing scripts have been made
+publicly available. Researchers can access the repository at https://github.com/Aurelius-04/EVF4
+TomatoManagemengt.git (accessed on 24 February 2026). Further inquiries or requests for specific
+raw dataset samples can be directed to the corresponding author.
+Conflicts of Interest: The authors declare no conflicts of interest.
+Appendix A. Theoretical Stability Bounds of the Temporal
+Routing Mechanism
+To ensure that the environmental factor modeling module remains robust against
+high-frequency sensor noise and transient microclimatic fluctuations, we establish the
+theoretical stability bounds for the routing-based feature selection mechanism. Let the
+temporal feature set extracted by the encoder be denoted as H = {h1, h2, . . ., hL}, where
+hi ∈ Rd. The routing mapping function fr(·) projects each token into a scalar relevance
+score, which is subsequently normalized via the softmax function to yield the attention
+weights αi = exp( fr(hi))
+∑L
+j=1 exp( fr(hj)) . The final environmental representation is aggregated as
+st = ∑L
+i=1 αihi. Assuming the routing function fr(·) is implemented as a multi-layer per-
+ceptron (MLP) with bounded weights and continuously differentiable activation functions
+(e.g., GELU or smoothed ReLU), fr is Lipschitz continuous with a constant Kr. Conse-
+quently, for any two bounded input sequences H and H′ subjected to a minor perturbation
+∆H such that ∥hi − h′
+i∥2 ≤ ϵ for all i, the variation in the unnormalized scores is strictly
+bounded by ∥ fr(hi) − fr(h′
+i)∥ ≤ Krϵ. Due to the contractive property of the softmax Jaco-
+bian matrix, the maximum deviation in the attention weight distribution ∆α is constrained,
+preventing disproportionate shifts in focus. Applying the triangle inequality to the ag-
+gregated representation yields an upper stability bound of ∥st − s′
+t∥2 ≤ O (Krϵ max ∥hi∥).
+This mathematical formulation rigorously guarantees that the continuous risk score st
+exhibits bounded sensitivity to environmental input perturbations, confirming that the tem-
+poral aggregation mechanism produces a stable, smooth risk trajectory suitable for driving
+closed-loop greenhouse control without triggering oscillatory mechanical responses.
+Appendix B. Stability Bounds of the Visual Attention Fusion Mechanism
+To demonstrate that the fusion of high-frequency convolutional textures with the
+global transformer token backbone does not introduce unstable amplification during early
+lesion detection, we establish the stability bounds for the attention-based fusion mod-
+ule (FuseAttn). The fusion is mathematically equivalent to a bounded attention-based
+combination of two representations mapped into the same semantic space.
+Let the output of the fusion module be defined as V = βZ(1) + (1 − β)Flatten( ˜U),
+where β ∈ [0, 1] is the dynamically learned fusion gating parameter. Applying the trian-
+gle inequality and the absolute homogeneity of vector norms, the L2-norm of the fused
+representation V satisfies the following upper bound:
+∥V∥2 ≤ β∥Z(1)∥2 + (1 − β)∥Flatten( ˜U)∥2. (A1)
+Because β ∈ [0, 1], the magnitude of the combined feature vector V is strictly bounded
+by the maximum of the norms of its constituent components. This convex combination
+guarantees that the signal-to-noise ratio of weak local lesion textures is enhanced without
+triggering unstable gradient amplification during backpropagation.
+Furthermore, the spatial weight matrix M is induced by a softmax attention distribu-
+tion, which fundamentally satisfies the constraints ∑i Mi = 1 and Mi ≥ 0 for all spatial
+https://doi.org/10.3390/horticulturae12030299
+
+--- PAGE 25 ---
+Horticulturae 2026, 12, 299 25 of 28
+indices i. Because M operates as a probabilistic mask applied via element-wise multiplica-
+tion ( ˜U = M ⊙ U), texture responses in high-risk (suspected lesion) regions are selectively
+preserved and amplified relative to the background, while the absolute magnitude of the
+background noise is strictly suppressed. This mathematical property ensures that early sub-
+tle symptoms can form more separable and stable representations within the downstream
+risk head.
+Appendix C. Lipschitz Stability Bounds of the Risk Mapping Network
+To guarantee that the continuous risk score rt generated by the cross-modal fusion
+module does not exhibit volatile fluctuations in response to minor environmental sensor
+noise or visual artifacts, we establish an upper bound on the network’s Lipschitz constant.
+The fused representation gt ∈ R256 is mapped to the final risk score rt ∈ (0, 1) via a
+two-layer multi-layer perceptron (MLP) defined as:
+rt = σ(W2 ϕ(W1gt + b1) + b2), (A2)
+where W1 and W2 represent the weight matrices of the linear layers, ϕ(·) denotes the GELU
+activation function, and σ(·) denotes the sigmoid activation function.
+By applying the chain rule for vector-valued functions, the sensitivity of the output risk
+with respect to the input representation gt is determined by the product of the Jacobians of
+the constituent transformations. The maximum rate of change is governed by the derivative
+bounds of the nonlinear activation functions. Specifically, the GELU activation function
+satisfies the derivative bound |ϕ′(x)| ≤ 1 across its entire domain, while the derivative of
+the standard sigmoid function satisfies |σ′(x)| ≤ 1/4.
+Consequently, the spectral norm (or inducedL2-norm) of the gradient ofrt with respect
+to gt is strictly bounded by:
+
+∂rt
+∂gt
+
+2
+≤ 1
+4 ∥W2∥2∥W1∥2. (A3)
+This inequality mathematically guarantees that the mapping from the latent semantic space
+to the actionable risk score is Lipschitz continuous. From a practical standpoint within the
+greenhouse control system, this bounded sensitivity ensures that small, transient perturba-
+tions in the environmental data or minor camera noise will not produce disproportionate
+spikes in the estimated risk rt. As a result, the subsequent risk-to-action mapping network
+π(·) receives a smooth, stable trajectory, preventing the erratic triggering or “chattering” of
+mechanical greenhouse regulation equipment (e.g., ventilation vents or dehumidifiers).
+References
+1. Solankey, S.; Ray, P .; Kumari, M.; Singh, H.; Shamim, M.; Verma, D.; Jha, V . Tomato diseases, their impact, and management. In
+Biotic Stress Management in Tomato; Apple Academic Press: New York, NY, USA, 2021; pp. 1–23.
+2. Jindo, K.; Evenhuis, A.; Kempenaar, C.; Pombo Sudré, C.; Zhan, X.; Goitom Teklu, M.; Kessel, G. Holistic pest management
+against early blight disease towards sustainable agriculture. Pest Manag. Sci. 2021, 77, 3871–3880. [CrossRef] [PubMed]
+3. Maserati, A. A Data Analysis of Tomato Late Blight Treatments Records of the Emilia-Romagna Region (Italy) for Studying the
+Current Fight Practices and Measuring Their Environmental Impact. Master’s Thesis, Politecnico di Milano, Milano, Italy, 2021.
+4. Singh, R.; Singh, S. A review of Indian-based drones in the agriculture sector: Issues, challenges, and solutions. Sensors 2025,
+25, 4876. [CrossRef] [PubMed]
+5. Deguine, J.P .; Aubertot, J.N.; Flor, R.J.; Lescourret, F.; Wyckhuys, K.A.; Ratnadass, A. Integrated pest management: Good
+intentions, hard realities. A review. Agron. Sustain. Dev. 2021, 41, 38. [CrossRef]
+6. Zhang, Y.; Wa, S.; Liu, Y.; Zhou, X.; Sun, P .; Ma, Q. High-accuracy detection of maize leaf diseases CNN based on multi-pathway
+activation function module. Remote Sens. 2021, 13, 4218. [CrossRef]
+https://doi.org/10.3390/horticulturae12030299
+
+--- PAGE 26 ---
+Horticulturae 2026, 12, 299 26 of 28
+7. Dhavale, M.C.; Aiwale, H.N.; Sarnobat, D.H. Modern Diagnostic Techniques in Plant Pathology. In Plant Health and Disease
+Management: A Modern Approach; Textify Publishers: Uttar Pradesh, India, 2025; p. 184.
+8. Guerrero-Ibañez, A.; Reyes-Muñoz, A. Monitoring tomato leaf disease through convolutional neural networks. Electronics 2023,
+12, 229. [CrossRef]
+9. Ahmed, N.; Zhang, B.; Deng, L.; Bozdar, B.; Li, J.; Chachar, S.; Chachar, Z.; Jahan, I.; Talpur, A.; Gishkori, M.S.; et al. Advancing
+horizons in vegetable cultivation: A journey from ageold practices to high-tech greenhouse cultivation—A review. Front. Plant
+Sci. 2024, 15, 1357153. [CrossRef] [PubMed]
+10. Ouyang, C.; Hatsugai, E.; Shimizu, I. Tomato disease monitoring system using modular extendable mobile robot for greenhouses:
+Automatically reporting locations of diseased tomatoes. Agronomy 2022, 12, 3160. [CrossRef]
+11. Rincon, D.F.; Rivera-Trujillo, H.F.; Borrero-Echeverry, F. A real-time decision-making tool based on dynamic thresholds for
+Phthorimaea absoluta management in greenhouse tomato. Crop Prot. 2023, 167, 106196. [CrossRef]
+12. Salotti, I.; Giorni, P .; Battilani, P . Biology, ecology, and epidemiology of Alternaria species affecting tomato: Ground information
+for the development of a predictive model. Front. Plant Sci. 2024, 15, 1430965. [CrossRef] [PubMed]
+13. Shaji, A.P .; Hemalatha, S. SVFRH: A Growth Stage-based Compartmental Model for Predicting the disease incident in tomato
+(Solanum lycopersicum). IEEE Access 2025, 13, 23412–23425. [CrossRef]
+14. Lin, X.; Wa, S.; Zhang, Y.; Ma, Q. A dilated segmentation network with the morphological correction method in farming area
+image Series. Remote Sens. 2022, 14, 1771. [CrossRef]
+15. Khan, M.; Gulan, F.; Arshad, M.; Zaman, A.; Riaz, A. Early and late blight disease identification in tomato plants using a neural
+network-based model to augmenting agricultural productivity. Sci. Progress 2024, 107, 00368504241275371. [CrossRef] [PubMed]
+16. Upadhyay, A.; Chandel, N.S.; Singh, K.P .; Chakraborty, S.K.; Nandede, B.M.; Kumar, M.; Subeesh, A.; Upendar, K.; Salem, A.;
+Elbeltagi, A. Deep learning and computer vision in plant disease detection: A comprehensive review of techniques, models, and
+trends in precision agriculture. Artif. Intell. Rev. 2025, 58, 92. [CrossRef]
+17. Ahmed, A.; Ali, S. Feature-Level Fusion of CNN and Vision Transformer for Tomato Leaf Disease Identification. Sci. Technol.
+2025, 7, 38–49.
+18. Patwal, P .; Chauhan, R.; Bhatt, C.; Devliyal, S. Automated tomato disease detection and classification using image processing and
+machine learning for precision agriculture. In Challenges in Information, Communication and Computing Technology; CRC Press: Boca
+Raton, FL, USA, 2024; pp. 481–486.
+19. Shoaib, M.; Hussain, T.; Shah, B.; Ullah, I.; Shah, S.M.; Ali, F.; Park, S.H. Deep learning-based segmentation and classification of
+leaf images for detection of tomato plant disease. Front. Plant Sci. 2022, 13, 1031748. [CrossRef]
+20. Gu, H.; Javidan, S.M.; Ampatzidis, Y.; Zhang, Z. Explainable AI for Predicting Latent Period and Infection Stage Progression in
+Tomato Fungal Diseases. Horticulturae 2025, 11, 1376. [CrossRef]
+21. Ally, N.M.; Neetoo, H.; Ranghoo-Sanmukhiya, V .M.; Coutinho, T.A. Greenhouse-grown tomatoes: Microbial diseases and their
+control methods: A review. Int. J. Phytopathol. 2023, 12, 99–127. [CrossRef]
+22. Sundararaman, B.; Jagdev, S.; Khatri, N. Transformative role of artificial intelligence in advancing sustainable tomato (Solanum
+lycopersicum) disease management for global food security: A comprehensive review. Sustainability 2023, 15, 11681. [CrossRef]
+23. Rompas, J.P . Detection and Management of Fungal Leaf Spot Disease in Tomato Using Biological Control Agents.J. Acad. Sci.
+2025, 2, 1362–1372.
+24. Zhang, N.; Wu, H.; Zhu, H.; Deng, Y.; Han, X. Tomato disease classification and identification method based on multimodal
+fusion deep learning. Agriculture 2022, 12, 2014. [CrossRef]
+25. Xu, C.; Ding, J.; Qiao, Y.; Zhang, L. Tomato disease and pest diagnosis method based on the Stacking of prescription data.Comput.
+Electron. Agric. 2022, 197, 106997. [CrossRef]
+26. Wang, X.; Liu, J.; Zhu, X. Early real-time detection algorithm of tomato diseases and pests in the natural environment. Plant
+Methods 2021, 17, 43. [CrossRef]
+27. Blanco, M.; Montes, F.; Borrero-Echeverry, F.; Solano-Blanco, A.L.; Gomez, C.; Zuluaga, P .; Rivera-Trujillo, H.F.; Rincon, D.F. A
+participative system methodology to model pest dynamics in an agricultural setting. Kybernetes 2023, 52, 3550–3565. [CrossRef]
+28. Dai, M.; Shen, Y.; Li, X.; Liu, J.; Zhang, S.; Miao, H. Digital Twin System of Pest Management Driven by Data and Model Fusion.
+Agriculture 2024, 14, 1099. [CrossRef]
+29. González-Concha, L.F.; Ramírez-Gil, J.G.; García-Estrada, R.S.; Rebollar-Alviter, Á.; Tovar-Pedraza, J.M. Spatiotemporal analyses
+of tomato brown rugose fruit virus in commercial tomato greenhouses. Agronomy 2021, 11, 1268. [CrossRef]
+30. Katsoulas, N.; Antoniadis, D.; Nikitas, A. A web-based system for fungus disease risk assessment in greenhouses: System
+development. Comput. Electron. Agric. 2021, 188, 106326. [CrossRef]
+31. Mahmud, T.; Barua, K.; Barua, A.; Basnin, N.; Das, S.; Hossain, M.S.; Andersson, K. Explainable ai for tomato leaf disease
+detection: Insights into model interpretability. In Proceedings of the 2023 26th International Conference on Computer and Information
+Technology (ICCIT); IEEE: New York, NY, USA, 2023; pp. 1–6.
+https://doi.org/10.3390/horticulturae12030299
+
+--- PAGE 27 ---
+Horticulturae 2026, 12, 299 27 of 28
+32. Altalak, M.; Ammad uddin, M.; Alajmi, A.; Rizg, A. Smart agriculture applications using deep learning technologies: A survey.
+Appl. Sci. 2022, 12, 5919. [CrossRef]
+33. Shi, T.; Liu, Y.; Zheng, X.; Hu, K.; Huang, H.; Liu, H.; Huang, H. Recent advances in plant disease severity assessment using
+convolutional neural networks. Sci. Rep. 2023, 13, 2336. [CrossRef]
+34. Barburiceanu, S.; Meza, S.; Orza, B.; Malutan, R.; Terebes, R. Convolutional neural networks for texture feature extraction.
+Applications to leaf disease classification in precision agriculture. IEEE Access 2021, 9, 160085–160103. [CrossRef]
+35. Ahad, M.T.; Li, Y.; Song, B.; Bhuiyan, T. Comparison of CNN-based deep learning architectures for rice diseases classification.
+Artif. Intell. Agric. 2023, 9, 22–35. [CrossRef]
+36. Luna-Benoso, B.; Martínez-Perales, J.C.; Cortés-Galicia, J.; Flores-Carapia, R.; Silva-García, V .M. Detection of diseases in tomato
+leaves by color analysis. Electronics 2021, 10, 1055. [CrossRef]
+37. Shen, X.; Han, D.; Guo, Z.; Chen, C.; Hua, J.; Luo, G. Local self-attention in transformer for visual question answering. Appl.
+Intell. 2023, 53, 16706–16723. [CrossRef]
+38. Tong, J.; Zhang, L.; Tian, J.; Yu, Q.; Lang, C. ToT-Net: A generalized and real-time crop disease detection framework via task-level
+meta-learning and lightweight multi-scale transformer. Smart Agric. Technol. 2025, 12, 101249. [CrossRef]
+39. Ahmed, I.; Yadav, P .K. Plant disease detection using machine learning approaches. Expert Syst. 2023, 40, e13136. [CrossRef]
+40. Kotwal, J.; Kashyap, R.; Pathan, S. Agricultural plant diseases identification: From traditional approach to deep learning. Mater.
+Today Proc. 2023, 80, 344–356. [CrossRef]
+41. Liu, Y.; Song, Y.; Ye, R.; Zhu, S.; Huang, Y.; Chen, T.; Zhou, J.; Li, J.; Li, M.; Lv, C. High-precision tomato disease detection using
+nanosegmenter based on transformer and lightweighting. Plants 2023, 12, 2559. [CrossRef]
+42. Pachoud, C.; Dendoncker, N.; Girard, S. Identifying visions on agricultural diversification: A first step toward sustainable
+agrifood transformations in the Bauges. Sustain. Sci. 2025, 20, 1623–1637. [CrossRef]
+43. Yusuf, A.G.; Al-Yahya, F.A.; Saleh, A.A.; Abdel-Ghany, A.M. Optimizing greenhouse microclimate for plant pathology: Challenges
+and cooling solutions for pathogen control in arid regions. Front. Plant Sci. 2025, 16, 1492760. [CrossRef]
+44. Jehani, M.; Mohamed, J.M.; Cheemala, S.; Nath, B.C.; Chonzik, E.K.; Srivastava, S. From Pathogen to Protection: Integrated
+Disease Management Strategies for Tomato Late Blight. J. Pure Appl. Microbiol. 2025, 19, 1686–1704. [CrossRef]
+45. Mugao, L.G.; Gichimu, B.M.; Muturi, P .W.; Njoroge, E.K. Essential oils as biocontrol agents of early and late blight diseases of
+tomato under greenhouse conditions. Int. J. Agron. 2021, 2021, 5719091. [CrossRef]
+46. Parveen, S.; Pricilla, A.; Sangeetha, B. Plant disease forecasting: A comprehensive review. Int. J. Hortic. Sci. Technol. 2025, 12,
+821–834.
+47. Zhang, Y.; Wa, S.; Zhang, L.; Lv, C. Automatic plant disease detection based on tranvolution detection network with GAN
+modules using leaf images. Front. Plant Sci. 2022, 13, 875693. [CrossRef]
+48. Farooq, M.S.; Riaz, S.; Helou, M.A.; Khan, F.S.; Abid, A.; Alvi, A. Internet of things in greenhouse agriculture: A survey on
+enabling technologies, applications, and protocols. IEEE Access 2022, 10, 53374–53397. [CrossRef]
+49. Rakitskii, V .N.; Zavolokina, N.G.; Bereznyak, I.V . A probabilistic model for risk assessment and predicting the health risk of
+occupational exposure to pesticides in agriculture. Hyg. Sanit. 2021, 100, 969–974. [CrossRef]
+50. Chen, S.; Liu, A.; Tang, F.; Hou, P .; Lu, Y.; Yuan, P . A Review of Environmental Control Strategies and Models for Modern
+Agricultural Greenhouses. Sensors 2025, 25, 1388. [CrossRef] [PubMed]
+51. Xiong, Y.; Su, Y. Hybrid modeling approaches for accurate greenhouse climate prediction: Combining mechanistic models and
+LSTM neural networks. Ecol. Model. 2025, 503, 111059. [CrossRef]
+52. El Sakka, M.; Ivanovici, M.; Chaari, L.; Mothe, J. A review of CNN applications in smart agriculture using multimodal data.
+Sensors 2025, 25, 472. [CrossRef]
+53. Yu, L.; Du, Z.; Li, X.; Zheng, J.; Zhao, Q.; Wu, H.; Yang, Y.; Zhang, Q.; Li, X.; Ma, X.; et al. Enhancing global agricultural monitoring
+system for climate-smart agriculture. Clim. Smart Agric. 2025, 2, 100037. [CrossRef]
+54. Yang, Z.X.; Li, Y.; Wang, R.F.; Hu, P .; Su, W.H. Deep Learning in Multimodal Fusion for Sustainable Plant Care: A Comprehensive
+Review. Sustainability 2025, 17, 5255. [CrossRef]
+55. Wang, J.; Wang, P .; Tian, H.; Tansey, K.; Liu, J.; Quan, W. A deep learning framework combining CNN and GRU for improving
+wheat yield estimates using time series remotely sensed multi-variables. Comput. Electron. Agric. 2023, 206, 107705. [CrossRef]
+56. Yu, C.; Yao, Y.; Yang, H.; Wang, X. An improved transformer model for sap flow prediction that efficiently utilizes environmental
+information. Agric. Res. 2025, 14, 823–834. [CrossRef]
+57. Zhang, J.; Wang, J.; Chen, S.; Tang, S.; Zhao, W. Multi-hazard meteorological disaster risk assessment for agriculture based on
+historical disaster data in Jilin Province, China. Sustainability 2022, 14, 7482. [CrossRef]
+58. Katharria, A.; Rajwar, K.; Pant, M.; Velásquez, J.D.; Snášel, V .; Deep, K. Information Fusion in Smart Agriculture: Machine
+Learning Applications and Future Research Directions. arXiv 2024, arXiv:2405.17465. [CrossRef]
+59. Jia, G.; Huang, H.; Fu, C.; He, R. Rethinking image cropping: Exploring diverse compositions from global views. In Proceedings of
+the IEEE/CVF Conference on Computer Vision and Pattern Recognition; IEEE: New York, NY, USA, 2022; pp. 2446–2455.
+https://doi.org/10.3390/horticulturae12030299
+
+--- PAGE 28 ---
+Horticulturae 2026, 12, 299 28 of 28
+60. Parmar, G.; Zhang, R.; Zhu, J.Y. On aliased resizing and surprising subtleties in gan evaluation. In Proceedings of the IEEE/CVF
+Conference on Computer Vision and Pattern Recognition; IEEE: New York, NY, USA, 2022; pp. 11410–11420.
+61. Huang, L.; Qin, J.; Zhou, Y.; Zhu, F.; Liu, L.; Shao, L. Normalization techniques in training dnns: Methodology, analysis and
+application. IEEE Trans. Pattern Anal. Mach. Intell. 2023, 45, 10173–10196. [CrossRef] [PubMed]
+62. Wang, Z.; Wang, Y.; Gao, C.; Wang, F.; Lin, T.; Chen, Y. An adaptive sliding window for anomaly detection of time series in
+wireless sensor networks. Wirel. Netw. 2022, 28, 393–411. [CrossRef]
+63. Ding, Z.; Mei, G.; Cuomo, S.; Li, Y.; Xu, N. Comparison of estimating missing values in iot time series data using different
+interpolation algorithms. Int. J. Parallel Program. 2020, 48, 534–548. [CrossRef]
+64. Yaro, A.S.; Maly, F.; Prazak, P . Outlier detection in time-series receive signal strength observation using Z-score method with S n
+scale estimator for indoor localization. Appl. Sci. 2023, 13, 3900. [CrossRef]
+65. Zhang, Z.Q. Cameras and inertial/magnetic sensor units alignment calibration. IEEE Trans. Instrum. Meas. 2016, 65, 1495–1502.
+[CrossRef]
+66. Blaser, R.; Fryzlewicz, P . Random rotation ensembles. J. Mach. Learn. Res. 2016, 17, 126–151.
+67. Curry, M.; Chen, M. Image Augmentation with Convolutional Neural Networks. In Proceedings of the 2023 IEEE 14th Annual
+Ubiquitous Computing, Electronics & Mobile Communication Conference (UEMCON); IEEE: New York, NY, USA, 2023; pp. 28–37.
+68. Watson, L.M.; Strang, N.C.; Scobie, F.; Love, G.D.; Seidel, D.; Manahilov, V . Image jitter enhances visual performance when spatial
+resolution is impaired. Investig. Ophthalmol. Vis. Sci. 2012, 53, 6004–6010. [CrossRef]
+69. Theckedath, D.; Sedamkar, R. Detecting affect states using VGG16, ResNet50 and SE-ResNet50 networks. SN Comput. Sci. 2020,
+1, 79. [CrossRef]
+70. Mahasin, M.; Dewi, I.A. Comparison of cspdarknet53, cspresnext-50, and efficientnet-b0 backbones on yolo v4 as object detector.
+Int. J. Eng. Sci. Inf. Technol. 2022, 2, 64–72. [CrossRef]
+71. Yuan, L.; Chen, Y.; Wang, T.; Yu, W.; Shi, Y.; Jiang, Z.H.; Tay, F.E.; Feng, J.; Yan, S. Tokens-to-token vit: Training vision transformers
+from scratch on imagenet. In Proceedings of the IEEE/CVF International Conference on Computer Vision; IEEE: New York, NY, USA,
+2021; pp. 558–567.
+72. Liu, Z.; Lin, Y.; Cao, Y.; Hu, H.; Wei, Y.; Zhang, Z.; Lin, S.; Guo, B. Swin transformer: Hierarchical vision transformer using
+shifted windows. In Proceedings of the IEEE/CVF International Conference on Computer Vision; IEEE: New York, NY, USA, 2021;
+pp. 10012–10022.
+73. Greff, K.; Srivastava, R.K.; Koutník, J.; Steunebrink, B.R.; Schmidhuber, J. LSTM: A search space odyssey. IEEE Trans. Neural Netw.
+Learn. Syst. 2016, 28, 2222–2232. [CrossRef] [PubMed]
+74. Dey, R.; Salem, F.M. Gate-variants of gated recurrent unit (GRU) neural networks. In Proceedings of the 2017 IEEE 60th international
+midwest symposium on circuits and systems (MWSCAS); IEEE: New York, NY, USA, 2017; pp. 1597–1600.
+Disclaimer/Publisher’s Note: The statements, opinions and data contained in all publications are solely those of the individual
+author(s) and contributor(s) and not of MDPI and/or the editor(s). MDPI and/or the editor(s) disclaim responsibility for any injury to
+people or property resulting from any ideas, methods, instructions or products referred to in the content.
+https://doi.org/10.3390/horticulturae12030299

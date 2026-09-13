@@ -1,0 +1,13 @@
+{
+  "status": "PASS",
+  "raw_files_verified": 4942,
+  "split_sha256": "69377f2755d001fe734c4b60d8ebba22d80b82840f0ad1882a069f87c8ce19c4",
+  "checks": [
+    "SHA256 of every raw file",
+    "unique image IDs",
+    "counts match audit",
+    "byte/pixel/group disjointness",
+    "split CSV membership",
+    "quality-case parent separation"
+  ]
+}

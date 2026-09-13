@@ -1,0 +1,185 @@
+{
+  "$defs": {
+    "Measurements": {
+      "additionalProperties": false,
+      "properties": {
+        "air_temperature_c": {
+          "anyOf": [
+            {
+              "maximum": 125,
+              "minimum": -40,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Air Temperature C"
+        },
+        "relative_humidity_pct": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relative Humidity Pct"
+        },
+        "soil_moisture_raw_adc": {
+          "anyOf": [
+            {
+              "maximum": 4095,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Soil Moisture Raw Adc"
+        },
+        "soil_moisture_relative_pct": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Soil Moisture Relative Pct"
+        },
+        "leaf_wetness_raw": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Leaf Wetness Raw"
+        },
+        "leaf_wetness_state": {
+          "default": "unknown",
+          "enum": [
+            "wet",
+            "dry",
+            "unknown"
+          ],
+          "title": "Leaf Wetness State",
+          "type": "string"
+        },
+        "light_lux": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Light Lux"
+        }
+      },
+      "title": "Measurements",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "node_id": {
+      "enum": [
+        "PG-A",
+        "PG-B"
+      ],
+      "title": "Node Id",
+      "type": "string"
+    },
+    "zone_id": {
+      "enum": [
+        "A",
+        "B"
+      ],
+      "title": "Zone Id",
+      "type": "string"
+    },
+    "boot_id": {
+      "maxLength": 64,
+      "minLength": 1,
+      "title": "Boot Id",
+      "type": "string"
+    },
+    "sequence": {
+      "minimum": 0,
+      "title": "Sequence",
+      "type": "integer"
+    },
+    "captured_at": {
+      "format": "date-time",
+      "title": "Captured At",
+      "type": "string"
+    },
+    "source_type": {
+      "enum": [
+        "physical",
+        "simulated",
+        "replay"
+      ],
+      "title": "Source Type",
+      "type": "string"
+    },
+    "measurements": {
+      "$ref": "#/$defs/Measurements"
+    },
+    "calibration_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Calibration Id"
+    },
+    "firmware_version": {
+      "maxLength": 64,
+      "minLength": 1,
+      "title": "Firmware Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "node_id",
+    "zone_id",
+    "boot_id",
+    "sequence",
+    "captured_at",
+    "source_type",
+    "measurements",
+    "firmware_version"
+  ],
+  "title": "Telemetry",
+  "type": "object"
+}

@@ -1,0 +1,16 @@
+annotated-types==0.8.0
+colorama==0.4.6
+ImageHash==4.3.2
+iniconfig==2.3.0
+numpy==2.4.2
+packaging==26.3
+pillow==12.1.1
+pluggy==1.6.0
+pydantic==2.12.5
+pydantic_core==2.41.5
+Pygments==2.21.0
+pytest==9.0.2
+PyWavelets==1.10.0
+scipy==1.17.1
+typing-inspection==0.4.4
+typing_extensions==4.16.0

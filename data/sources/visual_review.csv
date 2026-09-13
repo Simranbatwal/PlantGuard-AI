@@ -1,0 +1,25 @@
+local_path,reason,reviewer,reviewed_utc,action
+data/raw/plantdoc/test/Tomato Early blight leaf/039b47d574bc4bb8a14259a1cd96a741.jpg,comparison slide with text and multiple panels,assistant_visual_screen,2026-09-12,quarantine_no_relabel
+data/raw/plantdoc/test/Tomato leaf/2013-08-20-06.jpg,chopped leaf material rather than intact leaf scan,assistant_visual_screen,2026-09-12,quarantine_no_relabel
+data/raw/plantdoc/test/Tomato leaf/DSCN1015.JPG.jpg,crop identity uncertain; broad-leaf herb appearance,assistant_visual_screen,2026-09-12,quarantine_no_relabel
+data/raw/plantdoc/test/Tomato leaf/IMG_1246.jpg,crop identity uncertain in healthy-labelled image,assistant_visual_screen,2026-09-12,quarantine_no_relabel
+data/raw/plantdoc/test/Tomato leaf/Tomato_leaf.jpg,visible yellowing in healthy-labelled image; needs expert review,assistant_visual_screen,2026-09-12,quarantine_no_relabel
+data/raw/plantdoc/train/Tomato Early blight leaf/Tomato%20early%20blight%20target%20like%20leaf%20spot.jpg,primarily stem lesion rather than leaf scan,assistant_visual_screen,2026-09-12,quarantine_no_relabel
+data/raw/plantdoc/train/Tomato Early blight leaf/tomato_blight_early.jpg,educational illustration/composite rather than leaf photograph,assistant_visual_screen,2026-09-12,quarantine_no_relabel
+data/raw/plantdoc/train/Tomato leaf late blight/tomato+blight.jpg,fruit and leaf composite rather than leaf scan,assistant_visual_screen,2026-09-12,quarantine_no_relabel
+data/raw/plantdoc/train/Tomato leaf/003.JPG.jpg,crop identity uncertain in healthy-labelled image,assistant_visual_screen,2026-09-12,quarantine_no_relabel
+data/raw/plantdoc/train/Tomato leaf/15481477375.jpg,crop identity uncertain in healthy-labelled image,assistant_visual_screen,2026-09-12,quarantine_no_relabel
+data/raw/plantdoc/train/Tomato leaf/9bfac1dea7f401e3b379dab33f535bb4.jpg,multi-panel leaf-type chart,assistant_visual_screen,2026-09-12,quarantine_no_relabel
+data/raw/plantdoc/train/Tomato leaf/Bacterial-leaf-spot-transplants1.jpg,visible necrotic spots in healthy-labelled image,assistant_visual_screen,2026-09-12,quarantine_no_relabel
+data/raw/plantdoc/train/Tomato leaf/Basil%2Binfected%2Bby%2BTomato%2BSpotted%2BWilt%2BVirus.jpg,visible mottling in healthy-labelled image; needs expert review,assistant_visual_screen,2026-09-12,quarantine_no_relabel
+data/raw/plantdoc/train/Tomato leaf/DSCN1016.JPG.jpg,crop identity uncertain; broad-leaf herb appearance,assistant_visual_screen,2026-09-12,quarantine_no_relabel
+data/raw/plantdoc/train/Tomato leaf/Fig-2.jpg,visible mottling in healthy-labelled image; needs expert review,assistant_visual_screen,2026-09-12,quarantine_no_relabel
+data/raw/plantdoc/train/Tomato leaf/IMG_2061.JPG.jpg,crop identity uncertain in healthy-labelled image,assistant_visual_screen,2026-09-12,quarantine_no_relabel
+data/raw/plantdoc/train/Tomato leaf/L.peruv-assort.jpg,multiple labelled leaf-type specimens in one plate,assistant_visual_screen,2026-09-12,quarantine_no_relabel
+data/raw/plantdoc/train/Tomato leaf/curling-issues.jpg,severe leaf distortion in healthy-labelled image; needs expert review,assistant_visual_screen,2026-09-12,quarantine_no_relabel
+data/raw/plantdoc/train/Tomato leaf/happier-inside.jpg,crop identity uncertain in healthy-labelled image,assistant_visual_screen,2026-09-12,quarantine_no_relabel
+data/raw/plantdoc/train/Tomato leaf/stock-vector-set-of-vector-elements-for-your-design-red-ripe-tomatoes-with-water-drops-tomato-leaves-and-tomato-203297116.jpg,fruit flower and leaf composite,assistant_visual_screen,2026-09-12,quarantine_no_relabel
+data/raw/plantdoc/train/Tomato leaf/tomato-vine-ripe-leaves-isolated-against-white-34863029.jpg,fruit flower and leaf composite,assistant_visual_screen,2026-09-12,quarantine_no_relabel
+data/raw/plantdoc/train/Tomato Early blight leaf/100_46341.jpg,mostly dried ground litter; insufficient target leaf,assistant_visual_screen,2026-09-12,quarantine_no_relabel
+data/raw/plantdoc/train/Tomato Early blight leaf/20020531-early%20blight%20%20starts%20on%20lower%20leaves.jpg,distant whole-plant view; insufficient target leaf detail,assistant_visual_screen,2026-09-12,quarantine_no_relabel
+data/raw/plantdoc/train/Tomato Early blight leaf/20080526-_DSC4211.jpg,distant whole-plant view; insufficient target leaf detail,assistant_visual_screen,2026-09-12,quarantine_no_relabel

@@ -1,0 +1,26 @@
+{
+  "python": "3.12.14 (main, Aug 25 2026, 14:01:42) [MSC v.1944 64 bit (AMD64)]",
+  "executable": "C:\\Users\\Sneha\\Desktop\\PlantGuard-AI\\.venv\\Scripts\\python.exe",
+  "platform": "Windows-11-10.0.22000-SP0",
+  "packages": {
+    "annotated-types": "0.8.0",
+    "colorama": "0.4.6",
+    "ImageHash": "4.3.2",
+    "iniconfig": "2.3.0",
+    "numpy": "2.4.2",
+    "packaging": "26.3",
+    "pillow": "12.1.1",
+    "pip": "25.0.1",
+    "pluggy": "1.6.0",
+    "pydantic": "2.12.5",
+    "pydantic_core": "2.41.5",
+    "Pygments": "2.21.0",
+    "pytest": "9.0.2",
+    "PyWavelets": "1.10.0",
+    "scipy": "1.17.1",
+    "typing_extensions": "4.16.0",
+    "typing-inspection": "0.4.4"
+  },
+  "source_head_at_start": "38ef473166a698ad720b6031e81b96832c6dc534",
+  "gpu_training_route": "Google Colab confirmed by user; not connected or executed yet"
+}

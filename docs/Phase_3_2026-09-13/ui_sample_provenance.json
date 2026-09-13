@@ -1,0 +1,30 @@
+{
+  "purpose": "Upload-flow test only; not disease-model evaluation.",
+  "original_manifest_row": {
+    "dataset": "plantvillage",
+    "commit": "7f7ecc7e1eaca78107e3affe7cb5abd9427e139a",
+    "repo": "spMohanty/PlantVillage-Dataset",
+    "source_path": "raw/color/Tomato___healthy/000bf685-b305-408b-91f4-37030f8e62db___GH_HL Leaf 308.1.JPG",
+    "label": "healthy",
+    "original_class": "Tomato___healthy",
+    "blob_sha": "b66990434b25e4338cfd78d80fc55675a0d75b25",
+    "size": "18557",
+    "original_split": "unsplit",
+    "role": "benchmark",
+    "local_path": "data/raw/plantvillage/raw/color/Tomato___healthy/000bf685-b305-408b-91f4-37030f8e62db___GH_HL Leaf 308.1.JPG",
+    "source_url": "https://raw.githubusercontent.com/spMohanty/PlantVillage-Dataset/7f7ecc7e1eaca78107e3affe7cb5abd9427e139a/raw/color/Tomato___healthy/000bf685-b305-408b-91f4-37030f8e62db___GH_HL%20Leaf%20308.1.JPG",
+    "image_id": "8d74c86af19cb162",
+    "sha256": "a0d4ca4c979a0ca63ebb20a66bbd1cd46a43138d849b53bce1921694ab91938b",
+    "exclusion": "",
+    "leaf_group": "",
+    "width": "256",
+    "height": "256",
+    "pixel_sha256": "d5ae8f47d5d30528b38ffc662cef76badd437071a36e387bc6f739e638396930",
+    "phash": "d9e6649b329c93c8",
+    "mirror_phash": "8cb3318e67c8c69d",
+    "brightness": "111.63",
+    "edge_variance": "780.8",
+    "group_id": "4a2501f227a3dd255a34",
+    "split": "train"
+  }
+}

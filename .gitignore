@@ -1,1 +1,22 @@
 # Add ignore rules here later if needed
+.venv/
+__pycache__/
+.pytest_cache/
+*.pyc
+.env
+.env.*
+!.env.example
+data/raw/
+data/processed/
+data/sources/*tree.json
+data/sources/pv_*.json
+experiments/runs/**/checkpoints/
+*.pt
+*.pth
+*.onnx
+artifacts/
+
+# Local application state and generated build output
+runtime/
+frontend/node_modules/
+frontend/dist/

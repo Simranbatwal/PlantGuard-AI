@@ -1,0 +1,12 @@
+{
+  "configs/research_protocol.json": "65dd92a1f0ba6aa6de95d0f3d08a58b3e43ee394d1188c67361071afc4a4add0",
+  "contracts/telemetry.py": "8ab5bb58b299b56e9bd085eab1ac7ea5e3b98c39335967e2246eac91298dacd6",
+  "contracts/telemetry.schema.json": "5ed546a528f3abf0553ae25a333fa4808f1503fd1b45763163f33eec983d84c6",
+  "ml/notebooks/Phase_2_Data_Verification.ipynb": "f8c9051718665ab013e034ab9f7c8398c151a9304f6e52ba7f900a2cfbb41e21",
+  "pytest.ini": "0e6875a9a85c10c54f81fe5fdb2f2f7c84692c3450bf04100327043569343aab",
+  "requirements-phase12.lock.txt": "e6c4c44983235d65a5d6687e8eab445a5582e2491a54c8d58051a245b47dceaf",
+  "tests/test_telemetry.py": "bfdededcaf4c59d5bc224574ed6e74d2649cc8aa4b21609afc2c9185c6245cb9",
+  "tools/data/audit.py": "3446d27ec8040ce3b1d4cc27a3bd8e48258dbab912edbc230921d99b1ab4206b",
+  "tools/data/download.py": "2091588f9c7ad7e5f88f4fc6058314cad01278ed2e0d2bd9ef335ed473ce5c09",
+  "tools/data/verify.py": "47f7863b50a44bb9b9fbd2489873e0194a19fa0817a20b1fe4f340a82f855e7d"
+}

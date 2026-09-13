@@ -1,0 +1,17 @@
+{
+  "retrieved": "2026-09-12",
+  "plantvillage": {
+    "commit": "7f7ecc7e1eaca78107e3affe7cb5abd9427e139a",
+    "tree": "606168eef52319513159dda8532832b11e77c911"
+  },
+  "plantdoc": {
+    "commit": "5467f6012d78d1c446145d5f582da6096f852ae8",
+    "tree": "b4a474c8b5a7b013ae7e316e18a24d1ff31b366e"
+  },
+  "papers": {
+    "R1.pdf": "151ce25d20f26400993ccb2d58a6444cd40453c74d9725a3973a3a857371e532",
+    "R2.pdf": "c6728b7721076769355d4449b7e3c83208979a984399a6287eee473cc76fcf01",
+    "R3.pdf": "0df58af78a893748403b9624601cd6518860790de4677ec492acfb8d9a2b8209",
+    "R4.pdf": "bdec65d58ca6c2cadab5ef46cde54784a946406ad98c1b47916eb7355ba215d6"
+  }
+}
